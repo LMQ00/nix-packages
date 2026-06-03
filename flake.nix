@@ -37,6 +37,7 @@
           pywidevine = callPackage ./pkgs/pywidevine {};
           pymp4 = callPackage ./pkgs/pymp4 {};
           construct = callPackage ./pkgs/construct {};
+          sunlogin = callPackage ./pkgs/sunlogin {};
         };
 
       # Packages：直接可安装的包
@@ -48,6 +49,7 @@
           pywidevine = pkgs.pywidevine;
           pymp4 = pkgs.pymp4;
           construct = pkgs.construct;
+          sunlogin = pkgs.sunlogin;
           default = pkgs.musicdl;
         }
       );
