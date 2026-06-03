@@ -7,7 +7,6 @@
 , libappindicator-gtk3
 , xhost
 , libXScrnSaver
-, gconf
 , libxcrypt
 , gtk3
 , glib
@@ -74,13 +73,12 @@ stdenv.mkDerivation rec {
     makeWrapper
   ];
 
-  autoPatchelfHookArgs = "--ignore-missing libwidevinecdm.so";
+  autoPatchelfHookArgs = "--ignore-missing libwidevinecdm.so libgconf-2.so.4";
 
   buildInputs = [
     libappindicator-gtk3
     xhost
     libXScrnSaver
-    gconf
     libxcrypt
     gtk3
     glib
