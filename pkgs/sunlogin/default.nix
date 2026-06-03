@@ -5,37 +5,18 @@
 , autoPatchelfHook
 , makeWrapper
 , libappindicator-gtk3
-, xhost
-, libXScrnSaver
-, libxcrypt
+, xorg
 , gtk3
 , glib
-, libX11
-, libXext
-, libXrandr
-, libXtst
-, libXdamage
-, libXcomposite
-, libXi
-, libXcursor
-, libXrender
-, libXfixes
-, libXau
-, libXdmcp
-, libpthreadstubs
-, libxcb
-, xorgproto
+, nss
+, nspr
+, cups
 , libdrm
 , mesa
 , libGL
 , libglvnd
 , openssl
 , zlib
-, libgcc
-, nss
-, nspr
-, cups
-, libgbm
 , pango
 , cairo
 , gdk-pixbuf
@@ -44,17 +25,9 @@
 , libxkbcommon
 , libsecret
 , libnotify
-, libxml2
-, sqlite
 , udev
-, libpulseaudio
 , alsa-lib
-, libv4l
-, libusb1
-, libmtp
-, libgudev
-, libimobiledevice
-, libplist
+, libpulseaudio
 }:
 
 stdenv.mkDerivation rec {
@@ -72,6 +45,7 @@ stdenv.mkDerivation rec {
     makeWrapper
   ];
 
+  # 忽略缺失的依赖（运行时通过 nix-ld 或 FHS 解决）
   autoPatchelfIgnoreMissingDeps = [
     "libwidevinecdm.so"
     "libgconf-2.so.4"
@@ -81,37 +55,29 @@ stdenv.mkDerivation rec {
 
   buildInputs = [
     libappindicator-gtk3
-    xhost
-    libXScrnSaver
-    libxcrypt
+    xorg.libXScrnSaver
+    xorg.libXtst
+    xorg.libXdamage
+    xorg.libXcomposite
+    xorg.libXi
+    xorg.libXcursor
+    xorg.libXrender
+    xorg.libXfixes
+    xorg.libXrandr
+    xorg.libXinerama
+    xorg.libxcb
+    xorg.xorgproto
     gtk3
     glib
-    libX11
-    libXext
-    libXrandr
-    libXtst
-    libXdamage
-    libXcomposite
-    libXi
-    libXcursor
-    libXrender
-    libXfixes
-    libXau
-    libXdmcp
-    libpthreadstubs
-    libxcb
-    xorgproto
+    nss
+    nspr
+    cups
     libdrm
     mesa
     libGL
     libglvnd
     openssl
     zlib
-    libgcc
-    nss
-    nspr
-    cups
-    libgbm
     pango
     cairo
     gdk-pixbuf
@@ -120,32 +86,24 @@ stdenv.mkDerivation rec {
     libxkbcommon
     libsecret
     libnotify
-    libxml2
-    sqlite
     udev
-    libpulseaudio
     alsa-lib
-    libv4l
-    libusb1
-    libmtp
-    libgudev
-    libimobiledevice
-    libplist
+    libpulseaudio
   ];
 
   unpackPhase = "dpkg-deb -x $src .";
 
   installPhase = ''
-    # 复制整个解压后的目录
     mkdir -p $out/opt
     cp -r usr/local/sunlogin $out/opt/sunlogin
-    cp -r usr/share $out/share
 
-    # 创建 bin 目录并包装二进制文件
     mkdir -p $out/bin
-    makeWrapper $out/opt/sunlogin/bin/sunloginclient $out/bin/sunloginclient
+    makeWrapper $out/opt/sunlogin/bin/sunloginclient $out/bin/sunloginclient \
+      --prefix LD_LIBRARY_PATH : "$out/opt/sunlogin/lib"
 
-    # 更新桌面文件中的路径
+    # 更新桌面文件
+    mkdir -p $out/share/applications
+    cp usr/share/applications/sunlogin.desktop $out/share/applications/
     substituteInPlace $out/share/applications/sunlogin.desktop \
       --replace "/usr/local/sunlogin/bin/sunloginclient" "$out/bin/sunloginclient" \
       --replace "/usr/local/sunlogin/res/icon/sunlogin_client.png" "$out/opt/sunlogin/res/icon/sunlogin_client.png"
@@ -157,5 +115,6 @@ stdenv.mkDerivation rec {
     license = licenses.unfree;
     platforms = [ "x86_64-linux" ];
     maintainers = [ ];
+    mainProgram = "sunloginclient";
   };
 }
