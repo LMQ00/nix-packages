@@ -44,7 +44,6 @@
 , libxkbcommon
 , libsecret
 , libnotify
-, libsoup_2_4
 , libxml2
 , sqlite
 , udev
@@ -77,6 +76,7 @@ stdenv.mkDerivation rec {
     "libwidevinecdm.so"
     "libgconf-2.so.4"
     "libcrypt.so.1"
+    "libsoup-2.4.so.1"
   ];
 
   buildInputs = [
@@ -120,7 +120,6 @@ stdenv.mkDerivation rec {
     libxkbcommon
     libsecret
     libnotify
-    libsoup_2_4
     libxml2
     sqlite
     udev

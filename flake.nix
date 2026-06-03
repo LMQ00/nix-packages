@@ -24,6 +24,12 @@
           pkgs = import nixpkgs {
             inherit system;
             overlays = [ self.overlays.default ];
+            config = {
+              allowUnfree = true;
+              permittedInsecurePackages = [
+                "libsoup-2.74.3"
+              ];
+            };
           };
         in pkgs;
     in
