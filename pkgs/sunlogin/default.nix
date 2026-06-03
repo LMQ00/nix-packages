@@ -73,7 +73,7 @@ stdenv.mkDerivation rec {
     makeWrapper
   ];
 
-  autoPatchelfHookArgs = "--ignore-missing libwidevinecdm.so libgconf-2.so.4 libcrypt.so.1";
+  autoPatchelfHookArgs = "--ignore-missing=libwidevinecdm.so,libgconf-2.so.4,libcrypt.so.1";
 
   buildInputs = [
     libappindicator-gtk3
