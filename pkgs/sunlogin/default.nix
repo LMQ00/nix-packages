@@ -5,7 +5,7 @@
 , autoPatchelfHook
 , makeWrapper
 , libappindicator-gtk3
-, xorg
+, xhost
 , libxcrypt
 , gtk3
 , glib
@@ -74,7 +74,7 @@ stdenv.mkDerivation rec {
 
   buildInputs = [
     libappindicator-gtk3
-    xorg.xhost
+    xhost
     libxcrypt
     gtk3
     glib
@@ -129,17 +129,18 @@ stdenv.mkDerivation rec {
   unpackPhase = "dpkg-deb -x $src .";
 
   installPhase = ''
-    mkdir -p $out
-    cp -r opt/sunlogin $out/opt/
+    # 复制整个解压后的目录
+    cp -r usr/local/sunlogin $out/opt/sunlogin
     cp -r usr/share $out/share
 
     # 创建 bin 目录并包装二进制文件
     mkdir -p $out/bin
-    makeWrapper $out/opt/sunlogin/bin/runsunloginclient $out/bin/sunloginclient
+    makeWrapper $out/opt/sunlogin/bin/sunloginclient $out/bin/sunloginclient
 
-    # 将桌面文件中的路径更新为 Nix 路径
-    substituteInPlace $out/share/applications/runsunloginclient.desktop \
-      --replace "/opt/sunlogin/bin/runsunloginclient" "$out/bin/sunloginclient"
+    # 更新桌面文件中的路径
+    substituteInPlace $out/share/applications/sunlogin.desktop \
+      --replace "/usr/local/sunlogin/bin/sunloginclient" "$out/bin/sunloginclient" \
+      --replace "/usr/local/sunlogin/res/icon/sunlogin_client.png" "$out/opt/sunlogin/res/icon/sunlogin_client.png"
   '';
 
   meta = with lib; {
