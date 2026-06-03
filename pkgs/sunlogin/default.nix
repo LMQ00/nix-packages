@@ -43,7 +43,7 @@
 , libxkbcommon
 , libsecret
 , libnotify
-, libsoup
+, libsoup_2_4
 , libxml2
 , sqlite
 , udev
@@ -112,7 +112,7 @@ stdenv.mkDerivation rec {
     libxkbcommon
     libsecret
     libnotify
-    libsoup
+    libsoup_2_4
     libxml2
     sqlite
     udev
