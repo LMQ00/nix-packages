@@ -130,6 +130,7 @@ stdenv.mkDerivation rec {
 
   installPhase = ''
     # 复制整个解压后的目录
+    mkdir -p $out/opt
     cp -r usr/local/sunlogin $out/opt/sunlogin
     cp -r usr/share $out/share
 
