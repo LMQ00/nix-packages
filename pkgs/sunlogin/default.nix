@@ -34,7 +34,6 @@
 , nss
 , nspr
 , cups
-, libdrm
 , libgbm
 , pango
 , cairo
