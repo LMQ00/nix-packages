@@ -196,7 +196,8 @@ stdenv.mkDerivation rec {
     done
 
     mkdir -p $out/bin
-    makeWrapper $out/opt/sunlogin/bin/sunloginclient $out/bin/sunloginclient
+    makeWrapper $out/opt/sunlogin/bin/sunloginclient $out/bin/sunloginclient \
+      --set SUNLOGIN_HOME "$out/opt/sunlogin"
 
     # 更新桌面文件
     mkdir -p $out/share/applications
