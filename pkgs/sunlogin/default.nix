@@ -211,8 +211,11 @@ let
       done
 
       mkdir -p $out/bin
+      mkdir -p $out/opt/sunlogin/log
       makeWrapper $out/opt/sunlogin/bin/sunloginclient $out/bin/sunloginclient \
-        --set SUNLOGIN_HOME "$out/opt/sunlogin"
+        --set SUNLOGIN_HOME "$out/opt/sunlogin" \
+        --run 'mkdir -p /tmp/sunlogin-$USER/log 2>/dev/null || true' \
+        --add-flags '--no-sandbox'
 
       # 更新桌面文件
       mkdir -p $out/share/applications
