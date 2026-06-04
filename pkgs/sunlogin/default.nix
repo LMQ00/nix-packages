@@ -212,10 +212,10 @@ let
 
       mkdir -p $out/bin
       mkdir -p $out/opt/sunlogin/log
-      makeWrapper $out/opt/sunlogin/bin/sunloginclient $out/bin/sunloginclient \
-        --set SUNLOGIN_HOME "$out/opt/sunlogin" \
-        --run 'mkdir -p /tmp/sunlogin-$USER/log 2>/dev/null || true' \
-        --add-flags '--no-sandbox'
+
+
+
+
 
       # 更新桌面文件
       mkdir -p $out/share/applications
@@ -244,19 +244,30 @@ buildFHSEnv {
   pname = "sunlogin";
   inherit version;
 
-  # 运行 sunloginclient
-  runScript = "sunloginclient";
+  # 运行自定义启动脚本
+  runScript = "/usr/local/sunlogin-start.sh";
 
   # 需要的包
   targetPkgs = pkgs: [
     sunlogin-unwrapped
   ] ++ libs;
 
-  # 在 FHS 环境中创建符号链接
-  # 将 /usr/local/sunlogin 指向实际的 nix store 路径
+  # 在 FHS 环境中创建符号链接和启动脚本
   extraBuildCommands = ''
     mkdir -p $out/usr/local
     ln -sf ${sunlogin-unwrapped}/opt/sunlogin $out/usr/local/sunlogin
+
+    # 创建启动脚本（在 /usr/local 下，和 sunlogin 同级）
+    cat > $out/usr/local/sunlogin-start.sh <<'SCRIPT'
+#!/bin/bash
+mkdir -p /tmp/sunlogin-$USER/log 2>/dev/null
+if ! pgrep -x oray_rundaemon >/dev/null 2>&1; then
+  /usr/local/sunlogin/bin/oray_rundaemon -m server &>/dev/null &
+  sleep 1
+fi
+exec /usr/local/sunlogin/bin/sunloginclient --no-sandbox "$@"
+SCRIPT
+    chmod +x $out/usr/local/sunlogin-start.sh
   '';
 
   meta = with lib; {
