@@ -5,6 +5,7 @@
 , makeWrapper
 , patchelf
 , file
+, buildFHSEnv
 , libappindicator-gtk3
 , xorg
 , gtk3
@@ -153,60 +154,106 @@ let
   ];
 
 in
-stdenv.mkDerivation rec {
+let
+  # 原始 sunlogin 包（未包装 FHS 环境）
+  sunlogin-unwrapped = stdenv.mkDerivation rec {
+    pname = "sunlogin-unwrapped";
+    inherit version;
+
+    inherit src;
+
+    nativeBuildInputs = [
+      dpkg
+      makeWrapper
+      patchelf
+      file
+    ];
+
+    # 不使用 auto-patchelf
+    dontAutoPatchelf = true;
+    # 禁用自动 ELF 修补，防止覆盖手动设置的 RPATH
+    dontPatchELF = true;
+
+    unpackPhase = "dpkg-deb -x $src .";
+
+    installPhase = ''
+      runHook preInstall
+
+      mkdir -p $out/opt
+      cp -r usr/local/sunlogin $out/opt/sunlogin
+
+      # 创建 locale 文件的符号链接
+      # 程序对 locale 文件使用不同于 CEF 资源的路径解析机制：
+      # - CEF 资源 (cef.pak 等): 通过符号链接路径 /usr/local/sunlogin/res/cef.pak ✅
+      # - Locale 文件: 通过解析后的真实路径 /nix/store/.../res/zh-CN.pak（缺少 locales/ 子目录）❌
+      # 解决方案: 在 res/ 目录下创建指向 res/locales/ 的符号链接
+      for locale_file in $out/opt/sunlogin/res/locales/*.pak; do
+        if [ -f "$locale_file" ]; then
+          base_name=$(basename "$locale_file")
+          ln -sf "locales/$base_name" "$out/opt/sunlogin/res/$base_name"
+        fi
+      done
+
+      # 获取动态链接器路径
+      INTERP="${stdenv.cc.bintools.dynamicLinker}"
+      
+      # 设置 RPATH，包含兼容库目录
+      RPATH="${lib.makeLibraryPath libs}:${libcrypt-compat}/lib:$out/opt/sunlogin/lib:$out/opt/sunlogin/lib/back:$out/opt/sunlogin/lib/swiftshader"
+
+      find $out/opt/sunlogin -type f | while read f; do
+        if file "$f" | grep -q "ELF"; then
+          chmod +w "$f"
+          # 设置正确的动态链接器
+          patchelf --set-interpreter "$INTERP" "$f" 2>/dev/null || true
+          # 设置 RPATH（包含 libcrypt.so.1 兼容库）
+          patchelf --set-rpath "$RPATH" "$f" 2>/dev/null || true
+        fi
+      done
+
+      mkdir -p $out/bin
+      makeWrapper $out/opt/sunlogin/bin/sunloginclient $out/bin/sunloginclient \
+        --set SUNLOGIN_HOME "$out/opt/sunlogin"
+
+      # 更新桌面文件
+      mkdir -p $out/share/applications
+      cp usr/share/applications/sunlogin.desktop $out/share/applications/
+      substituteInPlace $out/share/applications/sunlogin.desktop \
+        --replace "/usr/local/sunlogin/bin/sunloginclient" "$out/bin/sunloginclient" \
+        --replace "/usr/local/sunlogin/res/icon/sunlogin_client.png" "$out/opt/sunlogin/res/icon/sunlogin_client.png"
+
+      runHook postInstall
+    '';
+
+    meta = with lib; {
+      description = "Sunlogin remote desktop client (unwrapped)";
+      homepage = "https://sunlogin.oray.com/";
+      license = licenses.unfree;
+      platforms = [ "x86_64-linux" ];
+      maintainers = [ ];
+    };
+  };
+in
+# 使用 buildFHSEnv 创建 FHS 兼容环境
+# 解决程序硬编码 /usr/local/sunlogin 路径的问题
+# 程序内部构造 CEF 参数：--locales-dir-path=/usr/local/sunlogin/res
+# 和 --resources-dir-path=/usr/local/sunlogin/res
+buildFHSEnv {
   pname = "sunlogin";
   inherit version;
 
-  inherit src;
+  # 运行 sunloginclient
+  runScript = "sunloginclient";
 
-  nativeBuildInputs = [
-    dpkg
-    makeWrapper
-    patchelf
-    file
-  ];
+  # 需要的包
+  targetPkgs = pkgs: [
+    sunlogin-unwrapped
+  ] ++ libs;
 
-  # 不使用 auto-patchelf
-  dontAutoPatchelf = true;
-  # 禁用自动 ELF 修补，防止覆盖手动设置的 RPATH
-  dontPatchELF = true;
-
-  unpackPhase = "dpkg-deb -x $src .";
-
-  installPhase = ''
-    runHook preInstall
-
-    mkdir -p $out/opt
-    cp -r usr/local/sunlogin $out/opt/sunlogin
-
-    # 获取动态链接器路径
-    INTERP="${stdenv.cc.bintools.dynamicLinker}"
-    
-    # 设置 RPATH，包含兼容库目录
-    RPATH="${lib.makeLibraryPath libs}:${libcrypt-compat}/lib:$out/opt/sunlogin/lib:$out/opt/sunlogin/lib/back:$out/opt/sunlogin/lib/swiftshader"
-
-    find $out/opt/sunlogin -type f | while read f; do
-      if file "$f" | grep -q "ELF"; then
-        chmod +w "$f"
-        # 设置正确的动态链接器
-        patchelf --set-interpreter "$INTERP" "$f" 2>/dev/null || true
-        # 设置 RPATH（包含 libcrypt.so.1 兼容库）
-        patchelf --set-rpath "$RPATH" "$f" 2>/dev/null || true
-      fi
-    done
-
-    mkdir -p $out/bin
-    makeWrapper $out/opt/sunlogin/bin/sunloginclient $out/bin/sunloginclient \
-      --set SUNLOGIN_HOME "$out/opt/sunlogin"
-
-    # 更新桌面文件
-    mkdir -p $out/share/applications
-    cp usr/share/applications/sunlogin.desktop $out/share/applications/
-    substituteInPlace $out/share/applications/sunlogin.desktop \
-      --replace "/usr/local/sunlogin/bin/sunloginclient" "$out/bin/sunloginclient" \
-      --replace "/usr/local/sunlogin/res/icon/sunlogin_client.png" "$out/opt/sunlogin/res/icon/sunlogin_client.png"
-
-    runHook postInstall
+  # 在 FHS 环境中创建符号链接
+  # 将 /usr/local/sunlogin 指向实际的 nix store 路径
+  extraBuildCommands = ''
+    mkdir -p $out/usr/local
+    ln -sf ${sunlogin-unwrapped}/opt/sunlogin $out/usr/local/sunlogin
   '';
 
   meta = with lib; {
