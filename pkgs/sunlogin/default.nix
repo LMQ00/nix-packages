@@ -252,6 +252,19 @@ buildFHSEnv {
     sunlogin-unwrapped
   ] ++ libs;
 
+  # 安装桌面文件和图标
+  extraInstallCommands = ''
+    mkdir -p $out/share/applications
+    mkdir -p $out/share/icons/hicolor/256x256/apps
+    cp ${sunlogin-unwrapped}/share/applications/sunlogin.desktop $out/share/applications/
+    cp ${sunlogin-unwrapped}/opt/sunlogin/res/icon/sunlogin_client.png $out/share/icons/hicolor/256x256/apps/
+    substituteInPlace $out/share/applications/sunlogin.desktop \
+      --replace "/usr/local/sunlogin/bin/sunloginclient" "sunlogin" \
+      --replace "/usr/local/sunlogin/res/icon/sunlogin_client.png" "sunlogin_client" \
+      --replace "${sunlogin-unwrapped}/bin/sunloginclient" "sunlogin" \
+      --replace "${sunlogin-unwrapped}/opt/sunlogin/res/icon/sunlogin_client.png" "sunlogin_client"
+  '';
+
   # 在 FHS 环境中创建符号链接和启动脚本
   extraBuildCommands = ''
     mkdir -p $out/usr/local
