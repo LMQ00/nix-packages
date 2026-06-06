@@ -49,7 +49,7 @@ let
     fi
 
     # 运行企业微信
-    exec wine "$WECOM_EXE" "$@"
+    exec "@WINE_BIN@" "$WECOM_EXE" "$@"
   '';
 
 in
@@ -105,7 +105,9 @@ stdenv.mkDerivation {
     cp ${startScriptTemplate} $out/bin/wecom-wine
     chmod +x $out/bin/wecom-wine
     substituteInPlace $out/bin/wecom-wine \
-      --replace "@WINEPREFIX_TEMPLATE@" "$out/share/wineprefix"
+      --replace "@WINEPREFIX_TEMPLATE@" "$out/share/wineprefix" \
+      --replace "@WINE_BIN@" "${wine}/bin/wine"
+    chmod +x $out/bin/wecom-wine
 
     # 创建桌面文件
     mkdir -p $out/share/applications
