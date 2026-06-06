@@ -44,6 +44,7 @@
           pymp4 = callPackage ./pkgs/pymp4 {};
           construct = callPackage ./pkgs/construct {};
           sunlogin = callPackage ./pkgs/sunlogin { gconf = final.gnome2.GConf; };
+          wecom-wine = callPackage ./pkgs/wecom-wine {};
         };
 
       # Packages：直接可安装的包
@@ -56,6 +57,7 @@
           pymp4 = pkgs.pymp4;
           construct = pkgs.construct;
           sunlogin = pkgs.sunlogin;
+          wecom-wine = pkgs.wecom-wine;
           default = pkgs.musicdl;
         }
       );

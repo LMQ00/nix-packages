@@ -11,6 +11,7 @@
 | [pywidevine](https://github.com/pywidevine/pywidevine) | 1.9.0 | Widevine DRM 工具库 |
 | [pymp4](https://github.com/beardypig/pymp4) | 1.4.0 | 纯 Python MP4 解析器 |
 | [construct](https://github.com/construct/construct) | 2.8.8 | 二进制数据解析库 |
+| [wecom-wine](https://work.weixin.qq.com/) | 5.0.8.6009 | 企业微信 Windows 版 (Wine) |
 
 ## 使用方法
 
@@ -158,6 +159,7 @@ nix fmt
 各个包的许可证请参考其上游项目的许可证：
 - musicdl: [PolyForm-Noncommercial-1.0.0](https://github.com/CharlesPikachu/musicdl/blob/main/LICENSE)
 - sunlogin: 闭源商业软件 (unfree)
+- wecom-wine: 闭源商业软件 (unfree)
 
 ## 贡献
 
