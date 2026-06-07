@@ -426,8 +426,8 @@
   },
   {
     "pname": "SkiaSharp.NativeAssets.Linux",
-    "version": "2.88.9",
-    "hash": "sha256-mQ/oBaqRR71WfS66mJCvcc3uKW7CNEHoPN2JilDbw/A="
+    "version": "3.119.4",
+    "hash": "sha256-+uBVQFmxEH73iI5GwgvftUhAHvenpvc5GtT63HQy1Qo="
   },
   {
     "pname": "SkiaSharp.NativeAssets.macOS",
