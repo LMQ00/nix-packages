@@ -46,6 +46,7 @@
           sunlogin = callPackage ./pkgs/sunlogin { gconf = final.gnome2.GConf; };
           wecom-wine = callPackage ./pkgs/wecom-wine {};
           sub-store = callPackage ./pkgs/sub-store {};
+          pcl-neo = callPackage ./pkgs/pcl-neo {};
         };
 
       # Packages：直接可安装的包
@@ -60,6 +61,7 @@
           sunlogin = pkgs.sunlogin;
           wecom-wine = pkgs.wecom-wine;
           sub-store = pkgs.sub-store;
+          pcl-neo = pkgs.pcl-neo;
           default = pkgs.musicdl;
         }
       );
