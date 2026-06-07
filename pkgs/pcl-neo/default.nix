@@ -12,7 +12,7 @@
 , runCommand
 , liberation_ttf
 , freefont_ttf
-, noto-fonts
+, noto-fonts-cjk-sans
 }:
 
 let
@@ -21,7 +21,7 @@ let
       fontDirectories = [
         liberation_ttf
         freefont_ttf
-        noto-fonts
+        noto-fonts-cjk-sans
       ];
     }} $out \
       --replace-fail "/etc/" "${fontconfig.out}/etc/"
@@ -46,8 +46,19 @@ buildDotnetModule rec {
 
   executables = [ "PCL.Neo" ];
 
+  # 禁用 PublishTrimmed，防止裁剪 Avalonia 嵌入资源（字体等）
+  dotnetFlags = [
+    "-p:PublishTrimmed=false"
+  ];
+
   makeWrapperArgs = [
-    "--set" "FONTCONFIG_FILE" "${fontsConf}"
+    "--set"
+    "FONTCONFIG_FILE"
+    "${fontsConf}"
+    "--prefix"
+    "LD_LIBRARY_PATH"
+    ":"
+    "${lib.makeLibraryPath [ fontconfig ]}"
   ];
 
   desktopItems = [
@@ -81,7 +92,7 @@ buildDotnetModule rec {
     fontconfig
     liberation_ttf
     freefont_ttf
-    noto-fonts
+    noto-fonts-cjk-sans
   ];
 
   meta = with lib; {
