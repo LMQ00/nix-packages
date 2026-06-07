@@ -45,6 +45,7 @@
           construct = callPackage ./pkgs/construct {};
           sunlogin = callPackage ./pkgs/sunlogin { gconf = final.gnome2.GConf; };
           wecom-wine = callPackage ./pkgs/wecom-wine {};
+          sub-store = callPackage ./pkgs/sub-store {};
         };
 
       # Packages：直接可安装的包
@@ -58,6 +59,7 @@
           construct = pkgs.construct;
           sunlogin = pkgs.sunlogin;
           wecom-wine = pkgs.wecom-wine;
+          sub-store = pkgs.sub-store;
           default = pkgs.musicdl;
         }
       );
