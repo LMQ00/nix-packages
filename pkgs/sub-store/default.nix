@@ -14,11 +14,7 @@ stdenv.mkDerivation (finalAttrs: {
     owner = "sub-store-org";
     repo = "Sub-Store";
     rev = finalAttrs.version;
-    # 首次构建时使用 lib.fakeHash，nix 会提示正确的 hash
-    # 或使用以下命令计算:
-    #   nix-prefetch-url --unpack https://github.com/sub-store-org/Sub-Store/archive/refs/tags/2.24.7.tar.gz
-    #   nix hash to-sri --type sha256 <hash>
-    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    hash = "sha256-raJGSnURJR4TReFkMm/zeoufepoeNFXtVIV+gOHav+0=";
   };
 
   # Sub-Store 的 Node.js 项目在 backend 子目录中
@@ -35,7 +31,8 @@ stdenv.mkDerivation (finalAttrs: {
   pnpmDeps = pnpm.fetchDeps {
     inherit (finalAttrs) pname version src;
     sourceRoot = "source/backend";
-    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    hash = "sha256-nhc7Kqoc2psw+k92Yt8vUYF1gpPMlQbf0zKwTrAgKDc=";
+    fetcherVersion = 1;
   };
 
   buildPhase = ''
@@ -47,14 +44,14 @@ stdenv.mkDerivation (finalAttrs: {
   installPhase = ''
     runHook preInstall
 
-    # 安装打包后的 JS 文件
+    # 安装打包后的 JS 文件（使用 Node.js 版本的 bundle）
     mkdir -p $out/share/sub-store
-    cp sub-store.min.js $out/share/sub-store/
+    cp dist/sub-store.bundle.js $out/share/sub-store/
 
     # 创建可执行包装脚本
     mkdir -p $out/bin
     makeWrapper ${nodejs}/bin/node $out/bin/sub-store \
-      --add-flags "$out/share/sub-store/sub-store.min.js"
+      --add-flags "$out/share/sub-store/sub-store.bundle.js"
 
     runHook postInstall
   '';

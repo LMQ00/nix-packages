@@ -12,6 +12,7 @@
 | [pymp4](https://github.com/beardypig/pymp4) | 1.4.0 | 纯 Python MP4 解析器 |
 | [construct](https://github.com/construct/construct) | 2.8.8 | 二进制数据解析库 |
 | [wecom-wine](https://work.weixin.qq.com/) | 5.0.8.6009 | 企业微信 Windows 版 (Wine) |
+| [sub-store](https://github.com/sub-store-org/Sub-Store) | 2.24.7 | 高级订阅管理工具 |
 
 ## 使用方法
 
