@@ -4,3 +4,6 @@ result-*
 
 # Nix store
 *.drv
+
+# Pi agent
+.pi/
