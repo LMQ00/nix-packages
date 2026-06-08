@@ -80,9 +80,9 @@ nix flake update
 ### Git 相关
 
 ```bash
-# 提交更改（使用 pi 用户免密码）
+# 提交更改
 git add .
-git commit --author="pi <pi@local>" --no-gpg-sign -m "描述"
+git commit -m "描述"
 
 # 推送
 git push origin main
@@ -98,4 +98,4 @@ git push origin main
 
 ---
 
-**最后更新**: 2026-06-08
+**最后更新**: 2026-06-07
