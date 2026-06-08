@@ -23,7 +23,6 @@
 | construct | 2.8.8 | 二进制数据解析库 |
 | wecom-wine | 5.0.8.6009 | 企业微信 Windows 版 (Wine) |
 | sub-store | 2.24.7 | 高级订阅管理工具 |
-| pcl-neo | 0.1.0-unstable | 跨平台 Minecraft 启动器 (Avalonia) |
 
 #### 使用方式
 
