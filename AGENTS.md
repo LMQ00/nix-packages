@@ -77,17 +77,6 @@ nix run github:LMQ00/nix-packages#<包名> --impure
 nix flake update
 ```
 
-### Git 相关
-
-```bash
-# 提交更改
-git add .
-git commit -m "描述"
-
-# 推送
-git push origin main
-```
-
 ## 注意事项
 
 - 许可证为 unfree 的包（musicdl, sunlogin, wecom-wine）需要 `--impure` 标志
