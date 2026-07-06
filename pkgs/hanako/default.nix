@@ -127,6 +127,10 @@ stdenv.mkDerivation {
     mkdir -p $out/lib/hanako
     cp -r opt/HanaAgent/* $out/lib/hanako/
 
+    # 修复文件权限：.deb 提取出的文件可能继承打包时的只读权限
+    # 尤其是 resources/server/ 下的 Node.js 服务端需要在运行时写入配置
+    chmod -R u+w $out/lib/hanako
+
     # 创建 bin 包装脚本
     mkdir -p $out/bin
     makeWrapper $out/lib/hanako/hanako $out/bin/hanako \
