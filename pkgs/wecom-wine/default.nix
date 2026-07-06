@@ -7,11 +7,11 @@
 }:
 
 let
-  version = "5.0.8.6009";
+  version = "5.0.9.6025";
 
   src = fetchurl {
     url = "https://dldir1.qq.com/wework/work_weixin/WeCom_${version}.exe";
-    hash = "sha256-yI42hV8LclQbxpEZS9wM5JXpP7JTcpbGrTe+RsEhhkc=";
+    hash = "sha256-Ksb8Z23QAGvi28ri1Vid4oeuZVhkit/ALLKZILg3Gfg=";
   };
 
   # 启动脚本模板（在 installPhase 中使用 substituteInPlace 替换路径）

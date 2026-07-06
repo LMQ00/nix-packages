@@ -16,13 +16,13 @@
 
 | 包名 | 版本 | 描述 |
 |------|------|------|
-| musicdl | 2.12.5 | 多平台音乐下载工具 |
+| musicdl | 2.13.0 | 多平台音乐下载工具 |
 | sunlogin | 15.2.0.63064 | 向日葵远程桌面客户端 |
 | pywidevine | 1.9.0 | Widevine DRM 工具库 |
 | pymp4 | 1.4.0 | 纯 Python MP4 解析器 |
 | construct | 2.8.8 | 二进制数据解析库 |
-| wecom-wine | 5.0.8.6009 | 企业微信 Windows 版 (Wine) |
-| sub-store | 2.24.7 | 高级订阅管理工具 |
+| wecom-wine | 5.0.9.6025 | 企业微信 Windows 版 (Wine) |
+| sub-store | 2.35.0 | 高级订阅管理工具 |
 | hanako | 0.350.2 | 有记忆、有性格的开源 AI 助理 |
 
 #### 使用方式

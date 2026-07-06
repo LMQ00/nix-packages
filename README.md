@@ -6,13 +6,13 @@
 
 | 包名 | 版本 | 描述 |
 |------|------|------|
-| [musicdl](https://github.com/CharlesPikachu/musicdl) | 2.12.5 | 多平台音乐下载工具 |
+| [musicdl](https://github.com/CharlesPikachu/musicdl) | 2.13.0 | 多平台音乐下载工具 |
 | [sunlogin](https://sunlogin.oray.com/) | 15.2.0.63064 | 向日葵远程桌面客户端 |
 | [pywidevine](https://github.com/pywidevine/pywidevine) | 1.9.0 | Widevine DRM 工具库 |
 | [pymp4](https://github.com/beardypig/pymp4) | 1.4.0 | 纯 Python MP4 解析器 |
 | [construct](https://github.com/construct/construct) | 2.8.8 | 二进制数据解析库 |
-| [wecom-wine](https://work.weixin.qq.com/) | 5.0.8.6009 | 企业微信 Windows 版 (Wine) |
-| [sub-store](https://github.com/sub-store-org/Sub-Store) | 2.24.7 | 高级订阅管理工具 |
+| [wecom-wine](https://work.weixin.qq.com/) | 5.0.9.6025 | 企业微信 Windows 版 (Wine) |
+| [sub-store](https://github.com/sub-store-org/Sub-Store) | 2.35.0 | 高级订阅管理工具 |
 | [hanako](https://openhanako.com) | 0.350.2 | 有记忆、有性格的开源 AI 助理 |
 
 ## 使用方法
