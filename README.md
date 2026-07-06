@@ -13,7 +13,6 @@
 | [construct](https://github.com/construct/construct) | 2.8.8 | 二进制数据解析库 |
 | [wecom-wine](https://work.weixin.qq.com/) | 5.0.8.6009 | 企业微信 Windows 版 (Wine) |
 | [sub-store](https://github.com/sub-store-org/Sub-Store) | 2.24.7 | 高级订阅管理工具 |
-| [pcl-neo](https://github.com/PCL-Community/PCL.Neo) | 1.0 | 基于 Avalonia 的跨平台 Minecraft 启动器 |
 | [hanako](https://openhanako.com) | 0.350.2 | 有记忆、有性格的开源 AI 助理 |
 
 ## 使用方法
@@ -163,7 +162,6 @@ nix fmt
 - musicdl: [PolyForm-Noncommercial-1.0.0](https://github.com/CharlesPikachu/musicdl/blob/main/LICENSE)
 - sunlogin: 闭源商业软件 (unfree)
 - wecom-wine: 闭源商业软件 (unfree)
-- pcl-neo: [MIT](https://github.com/PCL-Community/PCL.Neo/blob/main/LICENSE.Core)
 - hanako: [Apache 2.0](https://github.com/liliMozi/openhanako/blob/main/LICENSE)
 
 ## 贡献
