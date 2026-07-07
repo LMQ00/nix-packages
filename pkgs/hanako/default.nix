@@ -138,7 +138,9 @@ stdenv.mkDerivation {
       --set CHROME_SANDBOX "$out/lib/hanako/chrome-sandbox" \
       --set ELECTRON_OZONE_PLATFORM_HINT "auto" \
       --add-flags "--enable-features=UseOzonePlatform,WaylandWindowDecorations" \
-      --prefix LD_LIBRARY_PATH : "$out/lib/hanako"
+      --prefix LD_LIBRARY_PATH : "$out/lib/hanako" \
+      --prefix LD_LIBRARY_PATH : "/run/opengl-driver/lib" \
+      --set LIBGL_DRIVERS_PATH "/run/opengl-driver/lib/dri"
 
     # 安装桌面快捷方式
     mkdir -p $out/share/applications
