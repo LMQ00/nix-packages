@@ -4,6 +4,8 @@
 , autoPatchelfHook
 , dpkg
 , makeWrapper
+, writeShellScript
+, bash
 # Electron runtime dependencies
 , alsa-lib
 , atk
@@ -49,6 +51,16 @@ let
     url = "https://github.com/liliMozi/openhanako/releases/download/v${version}/HanaAgent-${version}-Linux-amd64.deb";
     hash = "sha256-FNDJH0LJltsgTruSDUcd0RmPudBEdIBx65dG1fPsHs4=";
   };
+
+  # 启动前修复 config 权限的外层包装
+  wrapperScript = writeShellScript "hanako-wrapper" ''
+    # 修复从 bundle 复制的只读配置文件权限
+    HANA_HOME="''${HANA_HOME:-$HOME/.hanako}"
+    if [ -d "$HANA_HOME/agents/hanako" ]; then
+      chmod -R u+w "$HANA_HOME/agents/hanako" 2>/dev/null || true
+    fi
+    exec @out@/bin/.hanako-wrapped "$@"
+  '';
 in
 stdenv.mkDerivation {
   pname = "hanako";
@@ -133,7 +145,9 @@ stdenv.mkDerivation {
 
     # 创建 bin 包装脚本
     mkdir -p $out/bin
-    makeWrapper $out/lib/hanako/hanako $out/bin/hanako \
+
+    # 先用 makeWrapper 创建基础包装（环境变量 + GPU 加速路径）
+    makeWrapper $out/lib/hanako/hanako $out/bin/.hanako-wrapped \
       --add-flags "--no-sandbox" \
       --set CHROME_SANDBOX "$out/lib/hanako/chrome-sandbox" \
       --set ELECTRON_OZONE_PLATFORM_HINT "auto" \
@@ -141,6 +155,11 @@ stdenv.mkDerivation {
       --prefix LD_LIBRARY_PATH : "$out/lib/hanako" \
       --prefix LD_LIBRARY_PATH : "/run/opengl-driver/lib" \
       --set LIBGL_DRIVERS_PATH "/run/opengl-driver/lib/dri"
+
+    # 外层 shell 包装：启动前修复 ~/.hanako/agents/hanako/ 的只读权限
+    cp ${wrapperScript} $out/bin/hanako
+    substituteInPlace $out/bin/hanako --replace-fail @out@ $out
+    chmod +x $out/bin/hanako
 
     # 安装桌面快捷方式
     mkdir -p $out/share/applications
