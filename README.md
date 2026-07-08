@@ -14,6 +14,7 @@
 | [wecom-wine](https://work.weixin.qq.com/) | 5.0.9.6025 | 企业微信 Windows 版 (Wine) |
 | [sub-store](https://github.com/sub-store-org/Sub-Store) | 2.35.0 | 高级订阅管理工具 |
 | [hanako](https://openhanako.com) | 0.350.2 | 有记忆、有性格的开源 AI 助理 |
+| [astudio](https://github.com/Candouber/Astudio) | 0.1.1-preview.4 | 多 Agent 协作任务执行工作台 |
 
 ## 使用方法
 
@@ -163,6 +164,7 @@ nix fmt
 - sunlogin: 闭源商业软件 (unfree)
 - wecom-wine: 闭源商业软件 (unfree)
 - hanako: [Apache 2.0](https://github.com/liliMozi/openhanako/blob/main/LICENSE)
+- astudio: [MIT](https://github.com/Candouber/Astudio/blob/main/LICENSE)
 
 ## 贡献
 

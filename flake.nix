@@ -47,6 +47,7 @@
           wecom-wine = callPackage ./pkgs/wecom-wine {};
           sub-store = callPackage ./pkgs/sub-store {};
           hanako = callPackage ./pkgs/hanako {};
+          astudio = callPackage ./pkgs/astudio {};
         };
 
       # Packages：直接可安装的包
@@ -62,6 +63,7 @@
           wecom-wine = pkgs.wecom-wine;
           sub-store = pkgs.sub-store;
           hanako = pkgs.hanako;
+          astudio = pkgs.astudio;
           default = pkgs.musicdl;
         }
       );
