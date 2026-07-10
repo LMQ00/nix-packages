@@ -31,30 +31,34 @@
               ];
             };
           };
-        in pkgs;
+        in
+        pkgs;
     in
     {
       # Overlay：供其他 flake 使用
       overlays.default = final: prev:
         let
           callPackage = final.callPackage;
-        in {
-          musicdl = callPackage ./pkgs/musicdl {};
-          pywidevine = callPackage ./pkgs/pywidevine {};
-          pymp4 = callPackage ./pkgs/pymp4 {};
-          construct = callPackage ./pkgs/construct {};
+        in
+        {
+          musicdl = callPackage ./pkgs/musicdl { };
+          pywidevine = callPackage ./pkgs/pywidevine { };
+          pymp4 = callPackage ./pkgs/pymp4 { };
+          construct = callPackage ./pkgs/construct { };
           sunlogin = callPackage ./pkgs/sunlogin { gconf = final.gnome2.GConf; };
-          wecom-wine = callPackage ./pkgs/wecom-wine {};
-          sub-store = callPackage ./pkgs/sub-store {};
-          hanako = callPackage ./pkgs/hanako {};
-          astudio = callPackage ./pkgs/astudio {};
+          wecom-wine = callPackage ./pkgs/wecom-wine { };
+          sub-store = callPackage ./pkgs/sub-store { };
+          hanako = callPackage ./pkgs/hanako { };
+          astudio = callPackage ./pkgs/astudio { };
+          aurevoy = callPackage ./pkgs/aurevoy { };
         };
 
       # Packages：直接可安装的包
       packages = forAllSystems (system:
         let
           pkgs = pkgsForSystem system;
-        in {
+        in
+        {
           musicdl = pkgs.musicdl;
           pywidevine = pkgs.pywidevine;
           pymp4 = pkgs.pymp4;
@@ -64,6 +68,7 @@
           sub-store = pkgs.sub-store;
           hanako = pkgs.hanako;
           astudio = pkgs.astudio;
+          aurevoy = pkgs.aurevoy;
           default = pkgs.musicdl;
         }
       );
@@ -72,7 +77,8 @@
       devShells = forAllSystems (system:
         let
           pkgs = pkgsForSystem system;
-        in {
+        in
+        {
           default = pkgs.mkShell {
             buildInputs = with pkgs; [
               nixpkgs-fmt
