@@ -51,6 +51,7 @@
           hanako = callPackage ./pkgs/hanako { };
           astudio = callPackage ./pkgs/astudio { };
           aurevoy = callPackage ./pkgs/aurevoy { };
+          omp = callPackage ./pkgs/omp { };
         };
 
       # Packages：直接可安装的包
@@ -69,6 +70,7 @@
           hanako = pkgs.hanako;
           astudio = pkgs.astudio;
           aurevoy = pkgs.aurevoy;
+          omp = pkgs.omp;
           default = pkgs.musicdl;
         }
       );
