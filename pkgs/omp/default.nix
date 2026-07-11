@@ -1,7 +1,8 @@
 { lib
 , stdenv
 , fetchurl
-, autoPatchelfHook
+, makeWrapper
+, pcre2
 }:
 
 let
@@ -30,6 +31,8 @@ let
 
   pname = "omp";
 
+  dynamicLinker = "${stdenv.cc.bintools}/nix-support/dynamic-linker";
+
   meta = with lib; {
     description = "Terminal-first AI coding agent with IDE integration, subagents, and LSP/DAP support";
     longDescription = ''
@@ -50,7 +53,11 @@ stdenv.mkDerivation {
   inherit pname version src meta;
 
   nativeBuildInputs = lib.optionals stdenv.isLinux [
-    autoPatchelfHook
+    makeWrapper
+  ];
+
+  buildInputs = lib.optionals stdenv.isLinux [
+    pcre2
   ];
 
   dontUnpack = true;
@@ -58,9 +65,23 @@ stdenv.mkDerivation {
   installPhase = ''
     runHook preInstall
 
-    mkdir -p $out/bin
-    cp $src $out/bin/omp
-    chmod +x $out/bin/omp
+    mkdir -p $out/bin $out/share/omp
+
+    cp $src $out/share/omp/omp
+    chmod +x $out/share/omp/omp
+
+  '' + lib.optionalString stdenv.isLinux ''
+    # DO NOT use patchelf -- it corrupts the embedded bunfs data in
+    # bun-compiled binaries. Instead, create a wrapper that invokes the
+    # dynamic linker directly, and set LD_LIBRARY_PATH for native modules.
+    makeWrapper \
+      "$(cat ${dynamicLinker})" \
+      $out/bin/omp \
+      --add-flags "$out/share/omp/omp" \
+      --prefix LD_LIBRARY_PATH : "${lib.makeLibraryPath [ pcre2 ]}"
+  '' + lib.optionalString stdenv.isDarwin ''
+    ln -s $out/share/omp/omp $out/bin/omp
+  '' + ''
 
     runHook postInstall
   '';
