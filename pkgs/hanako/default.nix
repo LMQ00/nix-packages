@@ -6,7 +6,7 @@
 , makeWrapper
 , writeShellScript
 , bash
-# Electron runtime dependencies
+  # Electron runtime dependencies
 , alsa-lib
 , atk
 , at-spi2-atk
@@ -46,10 +46,10 @@
 }:
 
 let
-  version = "0.350.2";
+  version = "0.357.17";
   src = fetchurl {
     url = "https://github.com/liliMozi/openhanako/releases/download/v${version}/HanaAgent-${version}-Linux-amd64.deb";
-    hash = "sha256-FNDJH0LJltsgTruSDUcd0RmPudBEdIBx65dG1fPsHs4=";
+    hash = "sha256-O0iRYP/7ShKc40QxMRw60+StkXjYjycfoM4x7QY+aEU=";
   };
 
   # 启动前修复 config 权限的外层包装

@@ -7,11 +7,11 @@
 }:
 
 let
-  version = "5.0.9.6025";
+  version = "5.0.9.6029";
 
   src = fetchurl {
     url = "https://dldir1.qq.com/wework/work_weixin/WeCom_${version}.exe";
-    hash = "sha256-Ksb8Z23QAGvi28ri1Vid4oeuZVhkit/ALLKZILg3Gfg=";
+    hash = "sha256-JInOF1UblzsUQ1pk5x0CcxMk1KBdx29sdvFWFr8nO/8=";
   };
 
   # 启动脚本模板（在 installPhase 中使用 substituteInPlace 替换路径）
@@ -98,31 +98,31 @@ stdenv.mkDerivation {
   '';
 
   installPhase = ''
-    runHook preInstall
+        runHook preInstall
 
-    # 创建启动脚本
-    mkdir -p $out/bin
-    cp ${startScriptTemplate} $out/bin/wecom-wine
-    chmod +x $out/bin/wecom-wine
-    substituteInPlace $out/bin/wecom-wine \
-      --replace "@WINEPREFIX_TEMPLATE@" "$out/share/wineprefix" \
-      --replace "@WINE_BIN@" "${wine}/bin/wine"
-    chmod +x $out/bin/wecom-wine
+        # 创建启动脚本
+        mkdir -p $out/bin
+        cp ${startScriptTemplate} $out/bin/wecom-wine
+        chmod +x $out/bin/wecom-wine
+        substituteInPlace $out/bin/wecom-wine \
+          --replace "@WINEPREFIX_TEMPLATE@" "$out/share/wineprefix" \
+          --replace "@WINE_BIN@" "${wine}/bin/wine"
+        chmod +x $out/bin/wecom-wine
 
-    # 创建桌面文件
-    mkdir -p $out/share/applications
-    cat > $out/share/applications/wecom-wine.desktop << 'DESKTOP'
-[Desktop Entry]
-Name=企业微信 (Wine)
-Comment=企业微信 Windows 版 (通过 Wine 运行)
-Exec=wecom-wine %u
-Icon=wecom-wine
-Terminal=false
-Type=Application
-Categories=Network;InstantMessaging;Office;
-DESKTOP
+        # 创建桌面文件
+        mkdir -p $out/share/applications
+        cat > $out/share/applications/wecom-wine.desktop << 'DESKTOP'
+    [Desktop Entry]
+    Name=企业微信 (Wine)
+    Comment=企业微信 Windows 版 (通过 Wine 运行)
+    Exec=wecom-wine %u
+    Icon=wecom-wine
+    Terminal=false
+    Type=Application
+    Categories=Network;InstantMessaging;Office;
+    DESKTOP
 
-    runHook postInstall
+        runHook postInstall
   '';
 
   meta = with lib; {

@@ -9,14 +9,14 @@
 
 python3Packages.buildPythonApplication rec {
   pname = "musicdl";
-  version = "2.13.0";
+  version = "2.13.1";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "CharlesPikachu";
     repo = "musicdl";
-    rev = "25669336c9bc9d0652e1fe34f2aa8bceebc6ac70";  # master branch, v2.13.0
-    hash = "sha256-kcS0aeW9hOlUERDBcNVK6X2JgiERGorqlhz5EZSJ/Us=";
+    rev = "bd74f2528a0e37854f42ee6dcce344c153229a6e"; # master branch, v2.13.1
+    hash = "sha256-Iemt49d+wIA42R9CU/yCfG7EVVfzPYx1tKGskIgshHc=";
   };
 
   # 使用 pyproject.toml 构建
@@ -95,7 +95,7 @@ python3Packages.buildPythonApplication rec {
   meta = with lib; {
     description = "A tool for downloading music from various platforms";
     homepage = "https://github.com/CharlesPikachu/musicdl";
-    license = licenses.unfree;  # PolyForm-Noncommercial-1.0.0 (not in nixpkgs)
+    license = licenses.unfree; # PolyForm-Noncommercial-1.0.0 (not in nixpkgs)
     maintainers = [ ];
     mainProgram = "musicdl";
   };
