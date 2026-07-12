@@ -16,7 +16,7 @@
 | [hanako](https://openhanako.com) | 0.357.17 | 有记忆、有性格的开源 AI 助理 |
 | [astudio](https://github.com/Candouber/Astudio) | 0.1.1-preview.4 | 多 Agent 协作任务执行工作台 |
 | [aurevoy](https://github.com/nullskymc/Aurevoy) | 0.6.3 | 本地运行的通用 AI Agent 桌面应用 |
-| [omp](https://omp.sh) | 16.4.4 | 终端 AI 编码 Agent，支持 LSP/DAP、子代理、40+ 模型提供商 |
+| [omp](https://omp.sh) | 16.4.6 | 终端 AI 编码 Agent，支持 LSP/DAP、子代理、40+ 模型提供商 |
 
 ## 使用方法
 
