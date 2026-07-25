@@ -12,11 +12,11 @@
 | [pymp4](https://github.com/beardypig/pymp4) | 1.4.0 | 纯 Python MP4 解析器 |
 | [construct](https://github.com/construct/construct) | 2.10.70 | 二进制数据解析库 |
 | [wecom-wine](https://work.weixin.qq.com/) | 5.0.9.6029 | 企业微信 Windows 版 (Wine) |
-| [sub-store](https://github.com/sub-store-org/Sub-Store) | 2.36.3 | 高级订阅管理工具 |
-| [hanako](https://openhanako.com) | 0.357.17 | 有记忆、有性格的开源 AI 助理 |
+*| [sub-store](https://github.com/sub-store-org/Sub-Store) | 2.36.21 | 高级订阅管理工具 |
+*| [hanako](https://openhanako.com) | 0.416.44 | 有记忆、有性格的开源 AI 助理 |
 | [astudio](https://github.com/Candouber/Astudio) | 0.1.1-preview.4 | 多 Agent 协作任务执行工作台 |
-| [aurevoy](https://github.com/nullskymc/Aurevoy) | 0.6.3 | 本地运行的通用 AI Agent 桌面应用 |
-| [omp](https://omp.sh) | 16.4.6 | 终端 AI 编码 Agent，支持 LSP/DAP、子代理、40+ 模型提供商 |
+*| [aurevoy](https://github.com/nullskymc/Aurevoy) | 0.6.10 | 本地运行的通用 AI Agent 桌面应用 |
+*| [omp](https://omp.sh) | 17.1.3 | 终端 AI 编码 Agent，支持 LSP/DAP、子代理、40+ 模型提供商 |
 
 ## 使用方法
 

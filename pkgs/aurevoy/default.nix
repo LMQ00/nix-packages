@@ -37,11 +37,11 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "aurevoy";
-  version = "0.6.3";
+  version = "0.6.10";
 
   src = fetchurl {
     url = "https://github.com/nullskymc/Aurevoy/releases/download/v${finalAttrs.version}/Aurevoy_${finalAttrs.version}_amd64.deb";
-    hash = "sha256-EKL6vruX6IAjaetOk95gBHFqfgMhG4ik97yJacJz3Hs=";
+    hash = "sha256-fkfDS99m9wvSmA0ZHB/wQRcu3lH4DLyLTrQWyTrYkpI=";
   };
 
   nativeBuildInputs = [
