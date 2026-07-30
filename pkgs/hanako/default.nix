@@ -46,10 +46,10 @@
 }:
 
 let
-  version = "0.416.44";
+  version = "0.421.24";
   src = fetchurl {
     url = "https://github.com/liliMozi/openhanako/releases/download/v${version}/HanaAgent-${version}-Linux-amd64.deb";
-    hash = "sha256-9KILMd0VPWPLS1lKgALLDrAaw9c4vF9Xw6xwguyjQDs=";
+    hash = "sha256-/qc8zgFkOyCBZl1bmr7FBSteh+Kj2z/U1IehslLxegg=";
   };
 
   # 启动前修复 config 权限的外层包装
