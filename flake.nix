@@ -53,6 +53,7 @@
           aurevoy = callPackage ./pkgs/aurevoy { };
           omp = callPackage ./pkgs/omp { };
           qq = callPackage ./pkgs/qq { };
+          wechat = callPackage ./pkgs/wechat { };
         };
 
       # Packages：直接可安装的包
@@ -73,6 +74,7 @@
           aurevoy = pkgs.aurevoy;
           omp = pkgs.omp;
           qq = pkgs.qq;
+          wechat = pkgs.wechat;
           default = pkgs.musicdl;
         }
       );
