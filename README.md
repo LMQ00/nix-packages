@@ -17,6 +17,7 @@
 | [astudio](https://github.com/Candouber/Astudio) | 0.1.1-preview.4 | 多 Agent 协作任务执行工作台 |
 *| [aurevoy](https://github.com/nullskymc/Aurevoy) | 0.6.14 | 本地运行的通用 AI Agent 桌面应用 |
 *| [omp](https://omp.sh) | 17.2.1 | 终端 AI 编码 Agent，支持 LSP/DAP、子代理、40+ 模型提供商 |
+| [qq](https://im.qq.com/index/) | 3.2.32 | 腾讯 QQ Linux 客户端 (NT 架构) |
 
 ## 使用方法
 
@@ -169,6 +170,7 @@ nix fmt
 - astudio: [MIT](https://github.com/Candouber/Astudio/blob/main/LICENSE)
 - aurevoy: [MIT](https://github.com/nullskymc/Aurevoy/blob/main/LICENSE)
 - omp: [MIT](https://github.com/can1357/oh-my-pi/blob/main/LICENSE)
+- qq: 闭源商业软件 (unfree)
 
 ## 贡献
 

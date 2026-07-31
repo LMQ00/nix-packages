@@ -52,6 +52,7 @@
           astudio = callPackage ./pkgs/astudio { };
           aurevoy = callPackage ./pkgs/aurevoy { };
           omp = callPackage ./pkgs/omp { };
+          qq = callPackage ./pkgs/qq { };
         };
 
       # Packages：直接可安装的包
@@ -71,6 +72,7 @@
           astudio = pkgs.astudio;
           aurevoy = pkgs.aurevoy;
           omp = pkgs.omp;
+          qq = pkgs.qq;
           default = pkgs.musicdl;
         }
       );
