@@ -7,7 +7,7 @@
 | 包名 | 版本 | 描述 |
 |------|------|------|
 | [musicdl](https://github.com/CharlesPikachu/musicdl) | 2.13.4 | 多平台音乐下载工具 |
-| [sunlogin](https://sunlogin.oray.com/) | 15.2.0.63064 | 向日葵远程桌面客户端 |
+| [sunlogin](https://sunlogin.oray.com/) | 16.5.0.30560 | 向日葵远程桌面客户端 (AweSun) |
 | [pywidevine](https://github.com/pywidevine/pywidevine) | 1.9.0 | Widevine DRM 工具库 |
 | [pymp4](https://github.com/beardypig/pymp4) | 1.4.0 | 纯 Python MP4 解析器 |
 | [construct](https://github.com/construct/construct) | 2.10.70 | 二进制数据解析库 |
@@ -15,8 +15,8 @@
 *| [sub-store](https://github.com/sub-store-org/Sub-Store) | 2.36.26 | 高级订阅管理工具 |
 *| [hanako](https://openhanako.com) | 0.421.24 | 有记忆、有性格的开源 AI 助理 |
 | [astudio](https://github.com/Candouber/Astudio) | 0.1.1-preview.4 | 多 Agent 协作任务执行工作台 |
-*| [aurevoy](https://github.com/nullskymc/Aurevoy) | 0.6.13 | 本地运行的通用 AI Agent 桌面应用 |
-*| [omp](https://omp.sh) | 17.1.8 | 终端 AI 编码 Agent，支持 LSP/DAP、子代理、40+ 模型提供商 |
+*| [aurevoy](https://github.com/nullskymc/Aurevoy) | 0.6.14 | 本地运行的通用 AI Agent 桌面应用 |
+*| [omp](https://omp.sh) | 17.2.1 | 终端 AI 编码 Agent，支持 LSP/DAP、子代理、40+ 模型提供商 |
 
 ## 使用方法
 

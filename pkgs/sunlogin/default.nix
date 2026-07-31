@@ -36,14 +36,16 @@
 , freetype
 , alsa-lib
 , libpulseaudio
+, libepoxy
 }:
 
 let
-  version = "15.2.0.63064";
+  # 上游已将向日葵 Linux 客户端改名为 AweSun
+  version = "16.5.0.30560";
 
   src = fetchurl {
-    url = "https://down.oray.com/sunlogin/linux/SunloginClient_${version}_amd64.deb";
-    hash = "sha256-3a5dNk64tpQGoOGDSQRQ/S+R8HKXKzcI6VGOiFLLimM=";
+    url = "https://dw.oray.com/sl/linux/awesun-${version}-x86_64.deb";
+    hash = "sha256-7aP//m1TJK+8T5OfDLhcCLeFHvrTwBh4YhR07HUD0Q8=";
   };
 
   # libcrypt.so.1 兼容包装库
@@ -121,6 +123,8 @@ let
     xorg.libXfixes
     xorg.libXrandr
     xorg.libXinerama
+    xorg.libSM
+    xorg.libICE
     xorg.libxcb
     xorg.xorgproto
     gtk3
@@ -151,13 +155,14 @@ let
     freetype
     alsa-lib
     libpulseaudio
+    libepoxy
   ];
 
 in
 let
-  # 原始 sunlogin 包（未包装 FHS 环境）
-  sunlogin-unwrapped = stdenv.mkDerivation rec {
-    pname = "sunlogin-unwrapped";
+  # 原始 AweSun 包（未包装 FHS 环境）
+  awesun-unwrapped = stdenv.mkDerivation rec {
+    pname = "awesun-unwrapped";
     inherit version;
 
     inherit src;
@@ -180,27 +185,15 @@ let
       runHook preInstall
 
       mkdir -p $out/opt
-      cp -r usr/local/sunlogin $out/opt/sunlogin
-
-      # 创建 locale 文件的符号链接
-      # 程序对 locale 文件使用不同于 CEF 资源的路径解析机制：
-      # - CEF 资源 (cef.pak 等): 通过符号链接路径 /usr/local/sunlogin/res/cef.pak ✅
-      # - Locale 文件: 通过解析后的真实路径 /nix/store/.../res/zh-CN.pak（缺少 locales/ 子目录）❌
-      # 解决方案: 在 res/ 目录下创建指向 res/locales/ 的符号链接
-      for locale_file in $out/opt/sunlogin/res/locales/*.pak; do
-        if [ -f "$locale_file" ]; then
-          base_name=$(basename "$locale_file")
-          ln -sf "locales/$base_name" "$out/opt/sunlogin/res/$base_name"
-        fi
-      done
+      cp -r usr/local/awesun $out/opt/awesun
 
       # 获取动态链接器路径
       INTERP="${stdenv.cc.bintools.dynamicLinker}"
-      
-      # 设置 RPATH，包含兼容库目录
-      RPATH="${lib.makeLibraryPath libs}:${libcrypt-compat}/lib:$out/opt/sunlogin/lib:$out/opt/sunlogin/lib/back:$out/opt/sunlogin/lib/swiftshader"
 
-      find $out/opt/sunlogin -type f | while read f; do
+      # 设置 RPATH，包含兼容库目录和 Flutter 插件库目录
+      RPATH="${lib.makeLibraryPath libs}:${libcrypt-compat}/lib:$out/opt/awesun/lib"
+
+      find $out/opt/awesun -type f | while read f; do
         if file "$f" | grep -q "ELF"; then
           chmod +w "$f"
           # 设置正确的动态链接器
@@ -211,24 +204,23 @@ let
       done
 
       mkdir -p $out/bin
-      mkdir -p $out/opt/sunlogin/log
+      mkdir -p $out/opt/awesun/log
 
-
-
-
+      # GUI 入口
+      ln -s $out/opt/awesun/awesun $out/bin/awesun
 
       # 更新桌面文件
       mkdir -p $out/share/applications
-      cp usr/share/applications/sunlogin.desktop $out/share/applications/
-      substituteInPlace $out/share/applications/sunlogin.desktop \
-        --replace "/usr/local/sunlogin/bin/sunloginclient" "$out/bin/sunloginclient" \
-        --replace "/usr/local/sunlogin/res/icon/sunlogin_client.png" "$out/opt/sunlogin/res/icon/sunlogin_client.png"
+      cp usr/share/applications/awesun.desktop $out/share/applications/
+      substituteInPlace $out/share/applications/awesun.desktop \
+        --replace "/usr/local/awesun/awesun" "$out/opt/awesun/awesun" \
+        --replace "/usr/local/awesun/awesun.png" "$out/opt/awesun/awesun.png"
 
       runHook postInstall
     '';
 
     meta = with lib; {
-      description = "Sunlogin remote desktop client (unwrapped)";
+      description = "AweSun (formerly Sunlogin) remote desktop client (unwrapped)";
       homepage = "https://sunlogin.oray.com/";
       license = licenses.unfree;
       platforms = [ "x86_64-linux" ];
@@ -237,9 +229,8 @@ let
   };
 in
 # 使用 buildFHSEnv 创建 FHS 兼容环境
-# 解决程序硬编码 /usr/local/sunlogin 路径的问题
-# 程序内部构造 CEF 参数：--locales-dir-path=/usr/local/sunlogin/res
-# 和 --resources-dir-path=/usr/local/sunlogin/res
+  # 解决程序硬编码 /usr/local/awesun 路径的问题
+  # 程序内部构造 Flutter 资源路径和守护进程路径时直接使用 /usr/local/awesun
 buildFHSEnv {
   pname = "sunlogin";
   inherit version;
@@ -249,46 +240,46 @@ buildFHSEnv {
 
   # 需要的包
   targetPkgs = pkgs: [
-    sunlogin-unwrapped
+    awesun-unwrapped
   ] ++ libs;
 
   # 安装桌面文件和图标
   extraInstallCommands = ''
     mkdir -p $out/share/applications
     mkdir -p $out/share/icons/hicolor/256x256/apps
-    cp ${sunlogin-unwrapped}/share/applications/sunlogin.desktop $out/share/applications/
-    cp ${sunlogin-unwrapped}/opt/sunlogin/res/icon/sunlogin_client.png $out/share/icons/hicolor/256x256/apps/
-    substituteInPlace $out/share/applications/sunlogin.desktop \
-      --replace "/usr/local/sunlogin/bin/sunloginclient" "sunlogin" \
-      --replace "/usr/local/sunlogin/res/icon/sunlogin_client.png" "sunlogin_client" \
-      --replace "${sunlogin-unwrapped}/bin/sunloginclient" "sunlogin" \
-      --replace "${sunlogin-unwrapped}/opt/sunlogin/res/icon/sunlogin_client.png" "sunlogin_client"
+    cp ${awesun-unwrapped}/share/applications/awesun.desktop $out/share/applications/
+    cp ${awesun-unwrapped}/opt/awesun/awesun.png $out/share/icons/hicolor/256x256/apps/
+    substituteInPlace $out/share/applications/awesun.desktop \
+      --replace "/usr/local/awesun/awesun" "sunlogin" \
+      --replace "/usr/local/awesun/awesun.png" "awesun" \
+      --replace "${awesun-unwrapped}/opt/awesun/awesun" "sunlogin" \
+      --replace "${awesun-unwrapped}/opt/awesun/awesun.png" "awesun"
   '';
 
   # 在 FHS 环境中创建符号链接和启动脚本
   extraBuildCommands = ''
-    mkdir -p $out/usr/local
-    ln -sf ${sunlogin-unwrapped}/opt/sunlogin $out/usr/local/sunlogin
+        mkdir -p $out/usr/local
+        ln -sf ${awesun-unwrapped}/opt/awesun $out/usr/local/awesun
 
-    # 创建启动脚本（在 /usr/local 下，和 sunlogin 同级）
-    cat > $out/usr/local/sunlogin-start.sh <<'SCRIPT'
-#!/bin/bash
-mkdir -p /tmp/sunlogin-$USER/log 2>/dev/null
-if ! pgrep -x oray_rundaemon >/dev/null 2>&1; then
-  /usr/local/sunlogin/bin/oray_rundaemon -m server &>/dev/null &
-  sleep 1
-fi
-exec /usr/local/sunlogin/bin/sunloginclient --no-sandbox "$@"
-SCRIPT
-    chmod +x $out/usr/local/sunlogin-start.sh
+        # 创建启动脚本（在 /usr/local 下，和 awesun 同级）
+        cat > $out/usr/local/sunlogin-start.sh <<'SCRIPT'
+    #!/bin/bash
+    mkdir -p /tmp/awesun-$USER 2>/dev/null
+    if ! pgrep -x awesun_daemon >/dev/null 2>&1; then
+      /usr/local/awesun/bin/awesun_daemon -m server -name awesun &>/dev/null &
+      sleep 1
+    fi
+    exec /usr/local/awesun/awesun "$@"
+    SCRIPT
+        chmod +x $out/usr/local/sunlogin-start.sh
   '';
 
   meta = with lib; {
-    description = "Sunlogin remote desktop client";
+    description = "AweSun (formerly Sunlogin) remote desktop client";
     homepage = "https://sunlogin.oray.com/";
     license = licenses.unfree;
     platforms = [ "x86_64-linux" ];
     maintainers = [ ];
-    mainProgram = "sunloginclient";
+    mainProgram = "sunlogin";
   };
 }
