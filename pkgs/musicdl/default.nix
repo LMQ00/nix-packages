@@ -15,8 +15,8 @@ python3Packages.buildPythonApplication rec {
   src = fetchFromGitHub {
     owner = "CharlesPikachu";
     repo = "musicdl";
-    rev = "fddc02586c7b212f1dc705847ead43660d65a91b"; # master branch, v2.13.4
-    hash = "sha256-EDczw9mrXRok5PSDDotoQmen4b90f/1OMfqQaTUwMcw=";
+    rev = "8534ed90a70d34377987a418dc98ae59089f77a6"; # master branch, v2.13.4
+    hash = "sha256-W5SPRoSxjXbrB016mmwfoKeR6YO1zSN8ws95U0QEKuU=";
   };
 
   # 使用 pyproject.toml 构建
@@ -32,6 +32,7 @@ python3Packages.buildPythonApplication rec {
     "cryptography"
     "platformdirs"
     "puremagic"
+    "rich"
   ];
 
   # 移除缺失的依赖
