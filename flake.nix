@@ -54,6 +54,7 @@
           omp = callPackage ./pkgs/omp { };
           qq = callPackage ./pkgs/qq { };
           wechat = callPackage ./pkgs/wechat { };
+          baidunetdisk = callPackage ./pkgs/baidunetdisk { };
         };
 
       # Packages：直接可安装的包
@@ -75,6 +76,7 @@
           omp = pkgs.omp;
           qq = pkgs.qq;
           wechat = pkgs.wechat;
+          baidunetdisk = pkgs.baidunetdisk;
           default = pkgs.musicdl;
         }
       );
