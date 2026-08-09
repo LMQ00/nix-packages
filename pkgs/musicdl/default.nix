@@ -15,8 +15,8 @@ python3Packages.buildPythonApplication rec {
   src = fetchFromGitHub {
     owner = "CharlesPikachu";
     repo = "musicdl";
-    rev = "8534ed90a70d34377987a418dc98ae59089f77a6"; # master branch, v2.13.4
-    hash = "sha256-W5SPRoSxjXbrB016mmwfoKeR6YO1zSN8ws95U0QEKuU=";
+    rev = "7d6f8fca6e59c89beb7b467f32aef5d677334b64"; # master branch (2026-08-05)
+    hash = "sha256-MdEJxC357D4mBvYF1nrb++8EDSFh0xqOezM+M2WwKzY=";
   };
 
   # 使用 pyproject.toml 构建
