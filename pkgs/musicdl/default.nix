@@ -9,14 +9,14 @@
 
 python3Packages.buildPythonApplication rec {
   pname = "musicdl";
-  version = "2.13.4";
+  version = "2.13.6";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "CharlesPikachu";
     repo = "musicdl";
-    rev = "7d6f8fca6e59c89beb7b467f32aef5d677334b64"; # master branch (2026-08-05)
-    hash = "sha256-MdEJxC357D4mBvYF1nrb++8EDSFh0xqOezM+M2WwKzY=";
+    rev = "485edb58487d4393f6aba5addefb6e24b1aac652"; # master branch (2026-08-11)
+    hash = "sha256-lC/EGObPakW3oM9nn0IUcT+CGbBiYjQCuXo/xB9fU44=";
   };
 
   # 使用 pyproject.toml 构建
