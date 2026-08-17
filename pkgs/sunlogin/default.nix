@@ -259,7 +259,12 @@ buildFHSEnv {
   # 在 FHS 环境中创建符号链接和启动脚本
   extraBuildCommands = ''
         mkdir -p $out/usr/local
-        ln -sf ${awesun-unwrapped}/opt/awesun $out/usr/local/awesun
+        # 用真实目录而非 symlink 提供 /usr/local/awesun：
+        # symlink 会被 execve 解析为 store 路径，导致 awesun_daemon 的
+        # 客户端校验（readlink /proc/<pid>/exe 前缀匹配 /usr/local/awesun）失败，
+        # GUI 连上 daemon 后被 RST（日志 Verify client failed），表现为登录/网络不可用。
+        # bwrap 对 rootfs 中的目录使用 --ro-bind 挂载，进程 exe 路径保持 /usr/local/awesun/awesun。
+        cp -r ${awesun-unwrapped}/opt/awesun $out/usr/local/awesun
 
         # 创建启动脚本（在 /usr/local 下，和 awesun 同级）
         cat > $out/usr/local/sunlogin-start.sh <<'SCRIPT'
