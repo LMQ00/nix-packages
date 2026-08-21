@@ -19,12 +19,12 @@
 
 let
   pname = "baidunetdisk";
-  version = "8.6.0";
+  version = "8.7.0";
   containerName = "baidunetdisk";
 
   deb = fetchurl {
     url = "http://wppkg.baidupcs.com/issue/netdisk/Linuxguanjia/${version}/baidunetdisk_${version}_amd64.deb";
-    sha256 = "28f62882fe35469b4008c1324e43d2a9109395bcbdfc05207e048a8487759d56";
+    sha256 = "ec71c2ad1151609fd0d8b86d95184c0b457d6db5aa18861e0b15fc23ccfe01f7";
   };
 
   startScript = writeShellScript "baidunetdisk" ''
