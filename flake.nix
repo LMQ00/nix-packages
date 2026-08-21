@@ -45,7 +45,7 @@
           pywidevine = callPackage ./pkgs/pywidevine { };
           pymp4 = callPackage ./pkgs/pymp4 { };
           construct = callPackage ./pkgs/construct { };
-          sunlogin = callPackage ./pkgs/sunlogin { gconf = final.gnome2.GConf; };
+          sunlogin = callPackage ./pkgs/sunlogin { };
           wecom-wine = callPackage ./pkgs/wecom-wine { };
           sub-store = callPackage ./pkgs/sub-store { };
           hanako = callPackage ./pkgs/hanako { };

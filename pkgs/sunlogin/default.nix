@@ -31,7 +31,6 @@
 , udev
 , util-linux
 , dbus
-, gconf
 , fontconfig
 , freetype
 , alsa-lib
@@ -150,7 +149,6 @@ let
     udev
     util-linux
     dbus
-    gconf
     fontconfig
     freetype
     alsa-lib
