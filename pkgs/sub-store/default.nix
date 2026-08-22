@@ -8,7 +8,7 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "sub-store";
-  version = "2.36.38";
+  version = "2.36.39";
 
   src = fetchFromGitHub {
     owner = "sub-store-org";

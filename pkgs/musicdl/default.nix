@@ -15,7 +15,7 @@ python3Packages.buildPythonApplication rec {
   src = fetchFromGitHub {
     owner = "CharlesPikachu";
     repo = "musicdl";
-    rev = "485edb58487d4393f6aba5addefb6e24b1aac652"; # master branch (2026-08-11)
+    rev = "f9e40ec722a7f7b01dea518ecf60e9bb180f9b16"; # master branch (2026-08-18)
     hash = "sha256-lC/EGObPakW3oM9nn0IUcT+CGbBiYjQCuXo/xB9fU44=";
   };
 

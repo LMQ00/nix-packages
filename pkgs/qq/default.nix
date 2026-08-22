@@ -31,8 +31,8 @@ stdenv.mkDerivation (finalAttrs: {
   version = "3.2.32";
 
   src = fetchurl {
-    url = "https://qqdl.gtimg.cn/qqfile/QQNT/9.9.33/release/c97651b2/QQ_${finalAttrs.version}_260730_amd64_01.deb";
-    hash = "sha256-ga4rhULvUxH8cuz1PJpSOSPINFacew2lLgv0Nguctfk=";
+    url = "https://qqdl.gtimg.cn/qqfile/QQNT/9.9.33/release/3f89efc5/QQ_${finalAttrs.version}_260812_amd64_01.deb";
+    hash = "sha256-0IXdiTlyJQYeufGUMI9ogSmBjtRFd36XpKChbhPXsOg=";
   };
 
   # 禁用 QQ 内置自动更新
