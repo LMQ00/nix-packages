@@ -40,11 +40,11 @@
 
 let
   # 上游已将向日葵 Linux 客户端改名为 AweSun
-  version = "16.5.0.30560";
+  version = "16.6.0.32198";
 
   src = fetchurl {
-    url = "https://dw.oray.com/sl/linux/awesun-${version}-x86_64.deb";
-    hash = "sha256-7aP//m1TJK+8T5OfDLhcCLeFHvrTwBh4YhR07HUD0Q8=";
+    url = "https://dw.oray.com/sl/linux/awesun_${version}_amd64.deb";
+    hash = "sha256-dtLVNEE6WKi79cV3teYXjj6vimhTBMAnrwL6TpItVjk=";
   };
 
   # libcrypt.so.1 兼容包装库

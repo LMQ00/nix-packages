@@ -6,19 +6,20 @@
 
 | 包名 | 版本 | 描述 |
 |------|------|------|
-| [musicdl](https://github.com/CharlesPikachu/musicdl) | 2.13.4 | 多平台音乐下载工具 |
-| [sunlogin](https://sunlogin.oray.com/) | 16.5.0.30560 | 向日葵远程桌面客户端 (AweSun) |
+| [musicdl](https://github.com/CharlesPikachu/musicdl) | 2.13.6 | 多平台音乐下载工具 |
+| [sunlogin](https://sunlogin.oray.com/) | 16.6.0.32198 | 向日葵远程桌面客户端 (AweSun) |
 | [pywidevine](https://github.com/pywidevine/pywidevine) | 1.9.0 | Widevine DRM 工具库 |
 | [pymp4](https://github.com/beardypig/pymp4) | 1.4.0 | 纯 Python MP4 解析器 |
-| [construct](https://github.com/construct/construct) | 2.10.70 | 二进制数据解析库 |
-| [wecom-wine](https://work.weixin.qq.com/) | 5.0.9.6063 | 企业微信 Windows 版 (Wine) |
-*| [sub-store](https://github.com/sub-store-org/Sub-Store) | 2.36.31 | 高级订阅管理工具 |
-*| [hanako](https://openhanako.com) | 0.444.1 | 有记忆、有性格的开源 AI 助理 |
+| [construct](https://github.com/construct/construct) | 2.8.8 | 二进制数据解析库 |
+| [wecom-wine](https://work.weixin.qq.com/) | 5.0.10.6015 | 企业微信 Windows 版 (Wine) |
+*| [sub-store](https://github.com/sub-store-org/Sub-Store) | 2.36.57 | 高级订阅管理工具 |
+*| [hanako](https://openhanako.com) | 0.449.0 | 有记忆、有性格的开源 AI 助理 |
 | [astudio](https://github.com/Candouber/Astudio) | 0.1.1-preview.4 | 多 Agent 协作任务执行工作台 |
 *| [aurevoy](https://github.com/nullskymc/Aurevoy) | 0.6.14 | 本地运行的通用 AI Agent 桌面应用 |
-| [omp](https://omp.sh) | 17.3.7 | 终端 AI 编码 Agent，支持 LSP/DAP、子代理、40+ 模型提供商 |
+| [omp](https://omp.sh) | 18.1.2 | 终端 AI 编码 Agent，支持 LSP/DAP、子代理、40+ 模型提供商 |
 | [qq](https://im.qq.com/index/) | 3.2.32 | 腾讯 QQ Linux 客户端 (NT 架构) |
 | [wechat](https://weixin.qq.com/) | 4.1.1.4 | 微信 Linux 版 (AppImage) |
+| [baidunetdisk](https://pan.baidu.com/download) | 8.7.0 | 百度网盘 Linux 客户端 |
 
 ## 使用方法
 
