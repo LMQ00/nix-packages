@@ -269,6 +269,9 @@ buildFHSEnv {
     Type=simple
     Environment=SUNLOGIN_DAEMON=1
     ExecStart=$out/bin/sunlogin
+    # daemon 崩溃后 Restart=always 重启时，残留的 root 所有 socket 文件
+    # 会让新 daemon bind EADDRINUSE 崩溃循环 —— 启动前清理（root 可删）
+    ExecStartPre=/bin/sh -c '${coreutils}/bin/rm -f /tmp/*_16090 /tmp/*_16308'
     KillMode=control-group
     ExecStop=${util-linux}/bin/kill -TERM \$MAINPID
     # daemon 被强杀后 /tmp/*_16090 等 RPC socket 文件残留（root 所有），
