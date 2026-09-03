@@ -60,6 +60,15 @@ trap cleanup EXIT
 kill_all_awesun
 sleep 0.5
 
+# daemon 被 kill -9 后 /tmp/*_16090 /tmp/*_16308 RPC socket 文件残留，
+# 会让新 daemon bind EADDRINUSE 启动即退。用户可删的自动清理；
+# root 所有的删不掉（/tmp sticky + 非 owner），上报指标供人工处理。
+stale_socket_root=0
+for f in /tmp/*_16090 /tmp/*_16308; do
+  [ -e "$f" ] && rm -f "$f" 2>/dev/null
+  [ -e "$f" ] && stale_socket_root=1
+done
+
 # ---------- 2. 构建（flake.lock 固定 → store 命中，无网络） ----------
 OUT="$(cd "$REPO_ROOT" && NIXPKGS_ALLOW_UNFREE=1 nix build --no-link --print-out-paths .#sunlogin --impure 2>"$BASE_TMP/build.err" | tail -1)"
 if [ -z "${OUT:-}" ] || [ ! -x "$OUT/bin/sunlogin" ]; then
@@ -176,5 +185,6 @@ echo "METRIC sunlogin_clean_ready_ms=$cleanA_ready"
 echo "METRIC sunlogin_clean_gui_connected=$gui_connected_A"
 echo "METRIC sunlogin_clean_rpc_fail=$rpc_fail_A"
 echo "METRIC sunlogin_systemd_unit=$systemd_unit"
+echo "METRIC sunlogin_stale_socket_root=$stale_socket_root"
 
 [ "$ok" = 1 ] && exit 0 || exit 1

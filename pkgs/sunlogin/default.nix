@@ -270,6 +270,9 @@ buildFHSEnv {
     ExecStart=$out/bin/sunlogin
     KillMode=control-group
     ExecStop=/bin/kill -TERM \$MAINPID
+    # daemon 被强杀后 /tmp/*_16090 等 RPC socket 文件残留（root 所有），
+    # 会阻塞后续用户 daemon bind —— 停止时一并清理
+    ExecStopPost=/bin/rm -f /tmp/*_16090 /tmp/*_16308
     Restart=always
     RestartSec=5
 
@@ -315,6 +318,12 @@ buildFHSEnv {
           ;;
       esac
     done
+    # 清理残留 RPC socket 文件：daemon 被 kill -9 后不会 unlink 它们，
+    # 残留文件（尤其 root 所有）会让新 daemon bind EADDRINUSE 启动即退。
+    # 仅在没有存活 daemon 时清理，避免误删运行中 daemon 的 socket。
+    if ! pgrep -x awesun_daemon >/dev/null 2>&1; then
+      rm -f /tmp/*_16090 /tmp/*_16308 2>/dev/null || true
+    fi
     if [ "''${SUNLOGIN_DAEMON:-0}" = 1 ]; then
       exec /usr/local/awesun/bin/awesun_daemon -m server -name awesun
     fi
