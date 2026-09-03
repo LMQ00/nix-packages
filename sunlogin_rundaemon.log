@@ -1,40 +1,40 @@
-[23488]	2026-09-03 17:51:43.576	- Info  -	server pid 23493
-[23488]	2026-09-03 17:51:43.576	- Info  -	rpc server using port 16090
-[23493]	2026-09-03 17:51:43.576	+Warning+	execv error 2
-[23488]	2026-09-03 17:51:43.576	- Info  -	start server ok
-[23494]	2026-09-03 17:51:43.576	= Debug =	[thread] prctl set thread name Thread-23494 b6695010 / 23494
-[23488]	2026-09-03 17:51:43.577	- Info  -	[signal_handler] service exited
-[23494]	2026-09-03 17:51:44.117	* Error *	[RpcUtil] pid:23517 readlink:24 stat(/usr/local/awesun/awesun)=-1
-[23494]	2026-09-03 17:51:44.117	* Error *	[rpc/TcpSocket] Verify client failed!
-[23488]	2026-09-03 17:51:44.577	- Info  -	server pid 23612
-[23612]	2026-09-03 17:51:44.577	+Warning+	execv error 2
-[23488]	2026-09-03 17:51:44.678	- Info  -	[signal_handler] service exited
-[23488]	2026-09-03 17:51:45.577	- Info  -	server pid 23637
-[23637]	2026-09-03 17:51:45.577	+Warning+	execv error 2
-[23488]	2026-09-03 17:51:45.678	- Info  -	[signal_handler] service exited
-[23488]	2026-09-03 17:51:46.577	- Info  -	server pid 23662
-[23662]	2026-09-03 17:51:46.577	+Warning+	execv error 2
-[23488]	2026-09-03 17:51:46.678	- Info  -	[signal_handler] service exited
-[23494]	2026-09-03 17:51:47.117	* Error *	[RpcUtil] pid:23517 readlink:24 stat(/usr/local/awesun/awesun)=-1
-[23494]	2026-09-03 17:51:47.118	* Error *	[rpc/TcpSocket] Verify client failed!
-[23488]	2026-09-03 17:51:47.578	- Info  -	server pid 23687
-[23687]	2026-09-03 17:51:47.578	+Warning+	execv error 2
-[23488]	2026-09-03 17:51:47.678	- Info  -	[signal_handler] service exited
-[23494]	2026-09-03 17:51:50.121	* Error *	[RpcUtil] pid:23517 readlink:24 stat(/usr/local/awesun/awesun)=-1
-[23494]	2026-09-03 17:51:50.121	* Error *	[rpc/TcpSocket] Verify client failed!
-[23494]	2026-09-03 17:51:53.122	* Error *	[RpcUtil] pid:23517 readlink:24 stat(/usr/local/awesun/awesun)=-1
-[23494]	2026-09-03 17:51:53.122	* Error *	[rpc/TcpSocket] Verify client failed!
-[23494]	2026-09-03 17:51:56.125	* Error *	[RpcUtil] pid:23517 readlink:24 stat(/usr/local/awesun/awesun)=-1
-[23494]	2026-09-03 17:51:56.125	* Error *	[rpc/TcpSocket] Verify client failed!
-[23494]	2026-09-03 17:51:59.126	* Error *	[RpcUtil] pid:23517 readlink:24 stat(/usr/local/awesun/awesun)=-1
-[23494]	2026-09-03 17:51:59.126	* Error *	[rpc/TcpSocket] Verify client failed!
-[23494]	2026-09-03 17:52:02.129	* Error *	[RpcUtil] pid:23517 readlink:24 stat(/usr/local/awesun/awesun)=-1
-[23494]	2026-09-03 17:52:02.129	* Error *	[rpc/TcpSocket] Verify client failed!
-[23494]	2026-09-03 17:52:05.130	* Error *	[RpcUtil] pid:23517 readlink:24 stat(/usr/local/awesun/awesun)=-1
-[23494]	2026-09-03 17:52:05.130	* Error *	[rpc/TcpSocket] Verify client failed!
-[23494]	2026-09-03 17:52:08.133	* Error *	[RpcUtil] pid:23517 readlink:24 stat(/usr/local/awesun/awesun)=-1
-[23494]	2026-09-03 17:52:08.133	* Error *	[rpc/TcpSocket] Verify client failed!
-[23494]	2026-09-03 17:52:11.136	* Error *	[RpcUtil] pid:23517 readlink:24 stat(/usr/local/awesun/awesun)=-1
-[23494]	2026-09-03 17:52:11.136	* Error *	[rpc/TcpSocket] Verify client failed!
-[23494]	2026-09-03 17:52:14.140	* Error *	[RpcUtil] pid:23517 readlink:24 stat(/usr/local/awesun/awesun)=-1
-[23494]	2026-09-03 17:52:14.140	* Error *	[rpc/TcpSocket] Verify client failed!
+[24639]	2026-09-03 17:52:48.846	- Info  -	server pid 24644
+[24639]	2026-09-03 17:52:48.846	- Info  -	rpc server using port 16090
+[24644]	2026-09-03 17:52:48.846	+Warning+	execv error 2
+[24645]	2026-09-03 17:52:48.846	= Debug =	[thread] prctl set thread name Thread-24645 8a8db010 / 24645
+[24639]	2026-09-03 17:52:48.846	- Info  -	start server ok
+[24639]	2026-09-03 17:52:48.846	- Info  -	[signal_handler] service exited
+[24645]	2026-09-03 17:52:49.389	* Error *	[RpcUtil] pid:24666 readlink:24 stat(/usr/local/awesun/awesun)=-1
+[24645]	2026-09-03 17:52:49.389	* Error *	[rpc/TcpSocket] Verify client failed!
+[24639]	2026-09-03 17:52:49.846	- Info  -	server pid 24762
+[24762]	2026-09-03 17:52:49.846	+Warning+	execv error 2
+[24639]	2026-09-03 17:52:49.947	- Info  -	[signal_handler] service exited
+[24639]	2026-09-03 17:52:50.846	- Info  -	server pid 24790
+[24790]	2026-09-03 17:52:50.847	+Warning+	execv error 2
+[24639]	2026-09-03 17:52:50.947	- Info  -	[signal_handler] service exited
+[24639]	2026-09-03 17:52:51.847	- Info  -	server pid 24815
+[24815]	2026-09-03 17:52:51.847	+Warning+	execv error 2
+[24639]	2026-09-03 17:52:51.948	- Info  -	[signal_handler] service exited
+[24645]	2026-09-03 17:52:52.392	* Error *	[RpcUtil] pid:24666 readlink:24 stat(/usr/local/awesun/awesun)=-1
+[24645]	2026-09-03 17:52:52.392	* Error *	[rpc/TcpSocket] Verify client failed!
+[24639]	2026-09-03 17:52:52.847	- Info  -	server pid 24840
+[24840]	2026-09-03 17:52:52.847	+Warning+	execv error 2
+[24639]	2026-09-03 17:52:52.948	- Info  -	[signal_handler] service exited
+[24645]	2026-09-03 17:52:55.394	* Error *	[RpcUtil] pid:24666 readlink:24 stat(/usr/local/awesun/awesun)=-1
+[24645]	2026-09-03 17:52:55.394	* Error *	[rpc/TcpSocket] Verify client failed!
+[24645]	2026-09-03 17:52:58.397	* Error *	[RpcUtil] pid:24666 readlink:24 stat(/usr/local/awesun/awesun)=-1
+[24645]	2026-09-03 17:52:58.397	* Error *	[rpc/TcpSocket] Verify client failed!
+[24645]	2026-09-03 17:53:01.401	* Error *	[RpcUtil] pid:24666 readlink:24 stat(/usr/local/awesun/awesun)=-1
+[24645]	2026-09-03 17:53:01.401	* Error *	[rpc/TcpSocket] Verify client failed!
+[24645]	2026-09-03 17:53:04.404	* Error *	[RpcUtil] pid:24666 readlink:24 stat(/usr/local/awesun/awesun)=-1
+[24645]	2026-09-03 17:53:04.404	* Error *	[rpc/TcpSocket] Verify client failed!
+[24645]	2026-09-03 17:53:07.407	* Error *	[RpcUtil] pid:24666 readlink:24 stat(/usr/local/awesun/awesun)=-1
+[24645]	2026-09-03 17:53:07.407	* Error *	[rpc/TcpSocket] Verify client failed!
+[24645]	2026-09-03 17:53:10.411	* Error *	[RpcUtil] pid:24666 readlink:24 stat(/usr/local/awesun/awesun)=-1
+[24645]	2026-09-03 17:53:10.411	* Error *	[rpc/TcpSocket] Verify client failed!
+[24645]	2026-09-03 17:53:13.413	* Error *	[RpcUtil] pid:24666 readlink:24 stat(/usr/local/awesun/awesun)=-1
+[24645]	2026-09-03 17:53:13.413	* Error *	[rpc/TcpSocket] Verify client failed!
+[24645]	2026-09-03 17:53:16.415	* Error *	[RpcUtil] pid:24666 readlink:24 stat(/usr/local/awesun/awesun)=-1
+[24645]	2026-09-03 17:53:16.415	* Error *	[rpc/TcpSocket] Verify client failed!
+[24645]	2026-09-03 17:53:19.419	* Error *	[RpcUtil] pid:24666 readlink:24 stat(/usr/local/awesun/awesun)=-1
+[24645]	2026-09-03 17:53:19.419	* Error *	[rpc/TcpSocket] Verify client failed!
