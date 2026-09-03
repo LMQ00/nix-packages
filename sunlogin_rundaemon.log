@@ -1,9 +1,0 @@
-[83166]	2026-09-03 19:53:58.378	- Info  -	server pid 83176
-[83166]	2026-09-03 19:53:58.378	- Info  -	rpc server using port 16090
-[83166]	2026-09-03 19:53:58.378	* Error *	[Bind] rpc remove addr errcode 2
-[83166]	2026-09-03 19:53:58.378	- Info  -	start server ok
-[83177]	2026-09-03 19:53:58.378	= Debug =	[thread] prctl set thread name Thread-83177 d7bbe010 / 83177
-[83177]	2026-09-03 19:53:59.133	* Error *	[RpcUtil] pid:83218 readlink:-1
-[83177]	2026-09-03 19:53:59.133	* Error *	[rpc/TcpSocket] Verify client failed!
-[83177]	2026-09-03 19:54:02.136	* Error *	[RpcUtil] pid:83218 readlink:-1
-[83177]	2026-09-03 19:54:02.136	* Error *	[rpc/TcpSocket] Verify client failed!

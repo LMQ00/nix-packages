@@ -191,7 +191,9 @@ sleep 1
 export HOME="$BASE_TMP/homeD" XDG_RUNTIME_DIR="$BASE_TMP/xdgD"
 mkdir -p "$HOME" "$XDG_RUNTIME_DIR"
 # 先以 daemon-mode 起一个正确 daemon（等价 systemd 已启动）
-SUNLOGIN_DAEMON=1 "$OUT/bin/sunlogin" >"$BASE_TMP/guiD0.log" 2>&1 &
+# 注意：daemon 会把 sunlogin_rundaemon.log 写进 cwd（bwrap --chdir 继承），
+# 必须在独立 workdir 里启动，避免污染仓库根（与 run_launch_and_measure 同约定）
+( cd "$WORKDIR" && exec env SUNLOGIN_DAEMON=1 "$OUT/bin/sunlogin" ) >"$BASE_TMP/guiD0.log" 2>&1 &
 DAEMON_D_PID=""
 for _ in $(seq 1 40); do
   if correct_daemon_alive; then
