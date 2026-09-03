@@ -172,6 +172,12 @@ systemd_unit=0
 find "$OUT" -name 'runawesun.service' 2>/dev/null | grep -q . && systemd_unit=1
 find "$OUT" -name '*.service' -path '*systemd*' 2>/dev/null | grep -qi awesun && systemd_unit=1
 
+# unit 语法/路径有效性：systemd-analyze verify 对坏 unit 在 stderr 报错
+# 但不返回非零（实测 /nonexistent 也是 rc=0），故以输出为空 = 有效
+unit_verify=0
+verify_out="$(systemd-analyze verify "$OUT/lib/systemd/system/runawesun.service" 2>&1 || true)"
+[ -z "$verify_out" ] && unit_verify=1
+
 # ---------- 输出 ----------
 echo "METRIC sunlogin_ok=$ok"
 echo "METRIC sunlogin_daemon_ready_ms=$B_ready"
@@ -186,5 +192,6 @@ echo "METRIC sunlogin_clean_gui_connected=$gui_connected_A"
 echo "METRIC sunlogin_clean_rpc_fail=$rpc_fail_A"
 echo "METRIC sunlogin_systemd_unit=$systemd_unit"
 echo "METRIC sunlogin_stale_socket_root=$stale_socket_root"
+echo "METRIC sunlogin_unit_verify=$unit_verify"
 
 [ "$ok" = 1 ] && exit 0 || exit 1
