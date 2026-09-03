@@ -191,7 +191,10 @@ sleep 1
 export HOME="$BASE_TMP/homeC" XDG_RUNTIME_DIR="$BASE_TMP/xdgC"
 mkdir -p "$HOME" "$XDG_RUNTIME_DIR"
 GUI_LOG_C="$BASE_TMP/guiC.log"
-SUNLOGIN_DAEMON=1 C_ready="$(run_launch_and_measure daemonMode "$GUI_LOG_C")"
+# 同场景 B：避免 $(...) 子 shell 退出触发 bwrap --die-with-parent 杀进程树
+C_READY_FILE="$BASE_TMP/readyC.txt"
+SUNLOGIN_DAEMON=1 run_launch_and_measure daemonMode "$GUI_LOG_C" "$SETTLE_S" "$C_READY_FILE"
+C_ready="$(cat "$C_READY_FILE" 2>/dev/null)"
 
 daemon_alive_C=0; correct_daemon_alive && daemon_alive_C=1
 listener_C=0;     listener_up && listener_C=1
@@ -220,7 +223,10 @@ done
 [ -n "$DAEMON_D_PID" ] || DAEMON_D_PID="0"
 # 再启动 GUI（用户视角）
 GUI_LOG_D="$BASE_TMP/guiD.log"
-D_ready="$(run_launch_and_measure reuseGUI "$GUI_LOG_D")"
+# 同场景 B：避免 $(...) 子 shell 退出触发 bwrap --die-with-parent 杀进程树
+D_READY_FILE="$BASE_TMP/readyD.txt"
+run_launch_and_measure reuseGUI "$GUI_LOG_D" "$SETTLE_S" "$D_READY_FILE"
+D_ready="$(cat "$D_READY_FILE" 2>/dev/null)"
 
 daemon_count_D="$(pgrep -x awesun_daemon | wc -l)"
 daemon_alive_D=0; correct_daemon_alive && daemon_alive_D=1
