@@ -252,6 +252,30 @@ buildFHSEnv {
       --replace "/usr/local/awesun/awesun.png" "awesun" \
       --replace "${awesun-unwrapped}/opt/awesun/awesun" "sunlogin" \
       --replace "${awesun-unwrapped}/opt/awesun/awesun.png" "awesun"
+
+    # 安装 systemd unit（用户假设的缺失服务，上游 deb 自带 runawesun.service）。
+    # 注意：必须写在顶层输出（extraInstallCommands 的 $out，含 bin/sunlogin wrapper），
+    # 不能写在 rootfs（extraBuildCommands 的 $out 里 /lib 是悬空 symlink，且无 wrapper）。
+    # FHS env 包装器不接受参数（container-init 忽略 argv），故 unit 用
+    # SUNLOGIN_DAEMON 环境变量切换 start script 为前台 daemon 模式。
+    mkdir -p $out/lib/systemd/system
+    cat > $out/lib/systemd/system/runawesun.service <<UNIT
+    [Unit]
+    Description=AweSun (formerly Sunlogin) remote desktop daemon
+    After=network.target
+
+    [Service]
+    Type=simple
+    Environment=SUNLOGIN_DAEMON=1
+    ExecStart=$out/bin/sunlogin
+    KillMode=control-group
+    ExecStop=/bin/kill -TERM \$MAINPID
+    Restart=always
+    RestartSec=5
+
+    [Install]
+    WantedBy=multi-user.target
+    UNIT
   '';
 
   # 在 FHS 环境中创建符号链接和启动脚本
@@ -265,9 +289,25 @@ buildFHSEnv {
         cp -r ${awesun-unwrapped}/opt/awesun $out/usr/local/awesun
 
         # 创建启动脚本（在 /usr/local 下，和 awesun 同级）
+        # 先校验已有 daemon 的 exe 路径：必须是 /usr/local/awesun 前缀。
+        # 若残留了 store 路径（或其它错误路径）的 daemon（例如误配的 systemd 服务
+        # 直接 ExecStart 了 store 二进制），GUI 连上它会被 RST（Verify client failed），
+        # 表现为登录/网络不可用 —— 此时杀掉并重启正确 daemon。
+        # SUNLOGIN_DAEMON=1 时（systemd 服务通过环境变量指定）前台 exec daemon，
+        # 供 Type=simple 管理；否则后台拉起 daemon 再 exec GUI。
         cat > $out/usr/local/sunlogin-start.sh <<'SCRIPT'
     #!/bin/bash
     mkdir -p /tmp/awesun-$USER 2>/dev/null
+    for p in $(pgrep -x awesun_daemon 2>/dev/null); do
+      exe=$(readlink /proc/$p/exe 2>/dev/null || true)
+      case "$exe" in
+        /usr/local/awesun/*) : ;;
+        *) kill -9 "$p" 2>/dev/null || true ;;
+      esac
+    done
+    if [ "''${SUNLOGIN_DAEMON:-0}" = 1 ]; then
+      exec /usr/local/awesun/bin/awesun_daemon -m server -name awesun
+    fi
     if ! pgrep -x awesun_daemon >/dev/null 2>&1; then
       /usr/local/awesun/bin/awesun_daemon -m server -name awesun &>/dev/null &
       sleep 1
