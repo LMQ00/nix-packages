@@ -289,20 +289,30 @@ buildFHSEnv {
         cp -r ${awesun-unwrapped}/opt/awesun $out/usr/local/awesun
 
         # 创建启动脚本（在 /usr/local 下，和 awesun 同级）
-        # 先校验已有 daemon 的 exe 路径：必须是 /usr/local/awesun 前缀。
+        # 先校验已有 daemon 的启动路径：必须是 /usr/local/awesun 前缀。
         # 若残留了 store 路径（或其它错误路径）的 daemon（例如误配的 systemd 服务
         # 直接 ExecStart 了 store 二进制），GUI 连上它会被 RST（Verify client failed），
         # 表现为登录/网络不可用 —— 此时杀掉并重启正确 daemon。
+        # 注意：不能用 readlink /proc/<pid>/exe —— bwrap 沙箱内对沙箱外进程（含
+        # 同用户进程）读取 exe 会 EPERM（yama ptrace_scope）。/proc/<pid>/cmdline
+        # 无此限制（跨用户也可读），且 daemon 启动命令本身就带 /usr/local/awesun
+        # 前缀，可作唯一判定依据。
         # SUNLOGIN_DAEMON=1 时（systemd 服务通过环境变量指定）前台 exec daemon，
         # 供 Type=simple 管理；否则后台拉起 daemon 再 exec GUI。
         cat > $out/usr/local/sunlogin-start.sh <<'SCRIPT'
     #!/bin/bash
     mkdir -p /tmp/awesun-$USER 2>/dev/null
     for p in $(pgrep -x awesun_daemon 2>/dev/null); do
-      exe=$(readlink /proc/$p/exe 2>/dev/null || true)
-      case "$exe" in
+      cmd=$(tr '\0' ' ' < /proc/$p/cmdline 2>/dev/null || true)
+      case "$cmd" in
         /usr/local/awesun/*) : ;;
-        *) kill -9 "$p" 2>/dev/null || true ;;
+        *)
+          # stale daemon：连同其 --mod=service 子进程一起杀，释放 RPC 端口
+          for c in $(pgrep -P "$p" 2>/dev/null); do
+            kill -9 "$c" 2>/dev/null || true
+          done
+          kill -9 "$p" 2>/dev/null || true
+          ;;
       esac
     done
     if [ "''${SUNLOGIN_DAEMON:-0}" = 1 ]; then
