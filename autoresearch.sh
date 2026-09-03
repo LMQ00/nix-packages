@@ -167,6 +167,22 @@ verify_failed=0;  grep -qi 'Verify client failed' "$GUI_LOG_B" 2>/dev/null && ve
 ok=0
 [ "$daemon_alive" = 1 ] && [ "$gui_connected" = 1 ] && [ "$rpc_fail" = 0 ] && [ "$verify_failed" = 0 ] && ok=1
 
+# ---------- 场景 C：daemon-mode（systemd ExecStart 语义） ----------
+# systemd unit 实际执行的是 SUNLOGIN_DAEMON=1 + $out/bin/sunlogin（bwrap →
+# sunlogin-start.sh → 前台 exec awesun_daemon）。GUI 场景已覆盖 start script
+# 的 GUI 分支，这里单独验证 daemon 分支：无 GUI，daemon 前台存活 + 监听。
+kill_all_awesun
+sleep 1
+export HOME="$BASE_TMP/homeC" XDG_RUNTIME_DIR="$BASE_TMP/xdgC"
+mkdir -p "$HOME" "$XDG_RUNTIME_DIR"
+GUI_LOG_C="$BASE_TMP/guiC.log"
+SUNLOGIN_DAEMON=1 C_ready="$(run_launch_and_measure daemonMode "$GUI_LOG_C")"
+
+daemon_alive_C=0; correct_daemon_alive && daemon_alive_C=1
+listener_C=0;     listener_up && listener_C=1
+daemon_mode_ok=0
+[ "$daemon_alive_C" = 1 ] && [ "$listener_C" = 1 ] && daemon_mode_ok=1
+
 # ---------- systemd unit 检查（用户假设） ----------
 systemd_unit=0
 find "$OUT" -name 'runawesun.service' 2>/dev/null | grep -q . && systemd_unit=1
@@ -193,5 +209,7 @@ echo "METRIC sunlogin_clean_rpc_fail=$rpc_fail_A"
 echo "METRIC sunlogin_systemd_unit=$systemd_unit"
 echo "METRIC sunlogin_stale_socket_root=$stale_socket_root"
 echo "METRIC sunlogin_unit_verify=$unit_verify"
+echo "METRIC sunlogin_daemon_mode_ok=$daemon_mode_ok"
+echo "METRIC sunlogin_daemon_mode_ready_ms=$C_ready"
 
 [ "$ok" = 1 ] && exit 0 || exit 1
