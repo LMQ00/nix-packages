@@ -93,6 +93,34 @@ nix run github:LMQ00/nix-packages#musicdl
 }
 ```
 
+### 启用 sunlogin 常驻服务 (NixOS)
+
+sunlogin (AweSun) 默认在启动 GUI 时自动拉起后台守护进程 `awesun_daemon`。
+若需要开机自启（远程被控），包内附带 systemd unit `runawesun.service`，
+在 NixOS 配置中启用：
+
+```nix
+{
+  inputs.nix-packages.url = "github:LMQ00/nix-packages";
+
+  systemd.packages = [
+    inputs.nix-packages.packages.${system}.sunlogin
+  ];
+  systemd.services.runawesun.wantedBy = [ "multi-user.target" ];
+}
+```
+
+启动/查看状态：
+
+```bash
+sudo systemctl enable --now runawesun
+systemctl status runawesun
+```
+
+该服务以前台模式运行 `awesun_daemon`（`SUNLOGIN_DAEMON=1`），
+GUI 启动脚本会复用已运行的守护进程；若检测到残留的错误路径 daemon
+（如直接指向 store 二进制的旧服务），会自动清理并重启正确进程。
+
 ### 使用 Overlay
 
 Overlay 提供了更灵活的集成方式：
