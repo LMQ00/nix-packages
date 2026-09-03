@@ -31,6 +31,8 @@ export DISPLAY=":$DISPLAY_NUM"
 READY_TIMEOUT_S=25
 SETTLE_S=5
 BASE_TMP="$(mktemp -d /tmp/awesun-harness.XXXXXX)"
+WORKDIR="$BASE_TMP/work"
+mkdir -p "$WORKDIR"
 GUI_LOG="$BASE_TMP/gui.log"
 STALE_LOG="$BASE_TMP/stale.log"
 XVFB_LOG="$BASE_TMP/xvfb.log"
@@ -93,11 +95,13 @@ listener_up() {
 }
 run_launch_and_measure() {
   # $1 = 场景名；$2 = GUI 日志路径。启动 GUI，轮询就绪，稳定窗口后打印 ready_ms
+  # 注意：daemon 会把 sunlogin_rundaemon.log 写进 cwd（bwrap --chdir 继承），
+  # 必须在独立 workdir 里启动，避免污染仓库根。
   local name="$1"
   local log="$2"
   local ready_ms="" t0
   t0="$(date +%s%N)"
-  "$OUT/bin/sunlogin" >"$log" 2>&1 &
+  ( cd "$WORKDIR" && exec "$OUT/bin/sunlogin" ) >"$log" 2>&1 &
   APP_PID=$!
   for _ in $(seq 1 $((READY_TIMEOUT_S * 4))); do
     if correct_daemon_alive && listener_up; then
@@ -129,7 +133,7 @@ sleep 1
 export HOME="$BASE_TMP/homeB" XDG_RUNTIME_DIR="$BASE_TMP/xdgB"
 mkdir -p "$HOME" "$XDG_RUNTIME_DIR"
 if [ -n "$STALE_DAEMON" ]; then
-  setsid "$STALE_DAEMON" -m server -name awesun >"$STALE_LOG" 2>&1 < /dev/null &
+  ( cd "$WORKDIR" && exec setsid "$STALE_DAEMON" -m server -name awesun ) >"$STALE_LOG" 2>&1 < /dev/null &
   for _ in $(seq 1 40); do
     pgrep -x awesun_daemon >/dev/null 2>&1 && break
     sleep 0.25
