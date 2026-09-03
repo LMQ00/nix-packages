@@ -93,33 +93,19 @@ nix run github:LMQ00/nix-packages#musicdl
 }
 ```
 
-### 启用 sunlogin 常驻服务 (NixOS)
+### sunlogin 守护进程说明
 
-sunlogin (AweSun) 默认在启动 GUI 时自动拉起后台守护进程 `awesun_daemon`。
-若需要开机自启（远程被控），包内附带 systemd unit `runawesun.service`，
-在 NixOS 配置中启用：
+sunlogin (AweSun) 的守护进程 `awesun_daemon` 由 **GUI 启动时自动拉起**
+（`sunlogin-start.sh` 负责，同一 FHS 环境内运行），无需手动管理。
 
-```nix
-{
-  inputs.nix-packages.url = "github:LMQ00/nix-packages";
+**不要**通过 systemd 常驻该 daemon：daemon 会校验客户端的 exe 路径
+（`readlink /proc/<pid>/exe` + ELF 检查），systemd 以 root 在宿主
+user namespace 启动的 daemon 与 GUI（bwrap 独立 user namespace）跨
+namespace 校验失败，会拒绝 GUI 连接（日志 `Verify client failed`），
+导致界面持续"网络不可用"。让 GUI 自管理 daemon（同 namespace）即可
+正常连接。
 
-  systemd.packages = [
-    inputs.nix-packages.packages.${system}.sunlogin
-  ];
-  systemd.services.runawesun.wantedBy = [ "multi-user.target" ];
-}
-```
-
-启动/查看状态：
-
-```bash
-sudo systemctl enable --now runawesun
-systemctl status runawesun
-```
-
-该服务以前台模式运行 `awesun_daemon`（`SUNLOGIN_DAEMON=1`），
-GUI 启动脚本会复用已运行的守护进程；若检测到残留的错误路径 daemon
-（如直接指向 store 二进制的旧服务），会自动清理并重启正确进程。
+包内 `runawesun.service` 仅为兼容保留，不应启用。
 
 ### 使用 Overlay
 
