@@ -30,6 +30,7 @@
 , libnotify
 , udev
 , util-linux
+, coreutils
 , dbus
 , fontconfig
 , freetype
@@ -269,10 +270,12 @@ buildFHSEnv {
     Environment=SUNLOGIN_DAEMON=1
     ExecStart=$out/bin/sunlogin
     KillMode=control-group
-    ExecStop=/bin/kill -TERM \$MAINPID
+    ExecStop=${util-linux}/bin/kill -TERM \$MAINPID
     # daemon 被强杀后 /tmp/*_16090 等 RPC socket 文件残留（root 所有），
     # 会阻塞后续用户 daemon bind —— 停止时一并清理
-    ExecStopPost=/bin/rm -f /tmp/*_16090 /tmp/*_16308
+    # 注意：NixOS 无 /bin/kill、/bin/rm，须用 store 路径；systemd 不展开
+    # glob（也不经 shell），故 ExecStopPost 走 /bin/sh -c。
+    ExecStopPost=/bin/sh -c '${coreutils}/bin/rm -f /tmp/*_16090 /tmp/*_16308'
     Restart=always
     RestartSec=5
 
