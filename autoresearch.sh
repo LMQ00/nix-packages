@@ -103,11 +103,13 @@ listener_up() {
   ss -tlnp 2>/dev/null | grep -q awesun
 }
 run_launch_and_measure() {
-  # $1 = 场景名；$2 = GUI 日志路径。启动 GUI，轮询就绪，稳定窗口后打印 ready_ms
+  # $1 = 场景名；$2 = GUI 日志路径；$3 = 稳定窗口秒数（默认 $SETTLE_S）
   # 注意：daemon 会把 sunlogin_rundaemon.log 写进 cwd（bwrap --chdir 继承），
   # 必须在独立 workdir 里启动，避免污染仓库根。
   local name="$1"
   local log="$2"
+  local settle="${3:-$SETTLE_S}"
+  local ready_file="${4:-}"
   local ready_ms="" t0
   t0="$(date +%s%N)"
   ( cd "$WORKDIR" && exec "$OUT/bin/sunlogin" ) >"$log" 2>&1 &
@@ -120,8 +122,12 @@ run_launch_and_measure() {
     sleep 0.25
   done
   [ -n "$ready_ms" ] || ready_ms=$((READY_TIMEOUT_S * 1000))
-  sleep "$SETTLE_S"
-  echo "$ready_ms"
+  sleep "$settle"
+  if [ -n "$ready_file" ]; then
+    printf '%s' "$ready_ms" >"$ready_file"
+  else
+    echo "$ready_ms"
+  fi
 }
 
 # ---------- 场景 A：clean 回归 ----------
@@ -157,15 +163,24 @@ if [ "$stale_precondition" = 1 ]; then
 fi
 
 GUI_LOG_B="$BASE_TMP/guiB.log"
-B_ready="$(run_launch_and_measure staleB "$GUI_LOG_B")"
+# 注意：B 场景 settle 40s 很长，若用命令替换 $(...) 捕获 ready_ms，
+# 命令替换子 shell 退出时 bwrap --die-with-parent 会杀 GUI/daemon 树，
+# 导致 gui_alive 误判为 0。改为函数内写文件，避免子 shell 包装。
+B_READY_FILE="$BASE_TMP/readyB.txt"
+# 直接调用（非 $(...) 命令替换）：命令替换子 shell 退出时 bwrap
+# --die-with-parent 会杀沙箱进程树（GUI 在树内被误杀，gui_alive 假阴性）
+run_launch_and_measure staleB "$GUI_LOG_B" 40 "$B_READY_FILE"
+B_ready="$(cat "$B_READY_FILE" 2>/dev/null)"
 
 daemon_alive=0; correct_daemon_alive && daemon_alive=1
+gui_alive=0;    pgrep -f '/usr/local/awesun/awesun' >/dev/null 2>&1 && gui_alive=1
+gui_crash=0;    grep -qE 'pure virtual|terminate called|SIGSEGV|SIGABRT' "$GUI_LOG_B" 2>/dev/null && gui_crash=1
 gui_connected=0; grep -q 'isConnected: true' "$GUI_LOG_B" 2>/dev/null && gui_connected=1
 rpc_fail="$(grep -c 'OnRpcConnect.*err=-1' "$GUI_LOG_B" 2>/dev/null || true)"
 verify_failed=0;  grep -qi 'Verify client failed' "$GUI_LOG_B" 2>/dev/null && verify_failed=1
 
 ok=0
-[ "$daemon_alive" = 1 ] && [ "$gui_connected" = 1 ] && [ "$rpc_fail" = 0 ] && [ "$verify_failed" = 0 ] && ok=1
+[ "$daemon_alive" = 1 ] && [ "$gui_alive" = 1 ] && [ "$gui_crash" = 0 ] && [ "$gui_connected" = 1 ] && [ "$rpc_fail" = 0 ] && [ "$verify_failed" = 0 ] && ok=1
 
 # ---------- 场景 C：daemon-mode（systemd ExecStart 语义） ----------
 # systemd unit 实际执行的是 SUNLOGIN_DAEMON=1 + $out/bin/sunlogin（bwrap →
@@ -233,6 +248,8 @@ echo "METRIC sunlogin_daemon_ready_ms=$B_ready"
 echo "METRIC sunlogin_gui_connected=$gui_connected"
 echo "METRIC sunlogin_rpc_fail=$rpc_fail"
 echo "METRIC sunlogin_daemon_alive=$daemon_alive"
+echo "METRIC sunlogin_gui_alive=$gui_alive"
+echo "METRIC sunlogin_gui_crash=$gui_crash"
 echo "METRIC sunlogin_stale_precondition=$stale_precondition"
 echo "METRIC sunlogin_stale_exe_wrong=$stale_exe_wrong"
 echo "METRIC sunlogin_clean_ok=$clean_ok"
