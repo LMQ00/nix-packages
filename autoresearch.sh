@@ -183,6 +183,37 @@ listener_C=0;     listener_up && listener_C=1
 daemon_mode_ok=0
 [ "$daemon_alive_C" = 1 ] && [ "$listener_C" = 1 ] && daemon_mode_ok=1
 
+# ---------- 场景 D：daemon 复用（生产流程） ----------
+# systemd 常驻 daemon 已运行时用户打开 GUI：start script 应识别正确 daemon
+# （cmdline 前缀匹配）并复用，不重复启动、不杀掉现有 daemon。
+kill_all_awesun
+sleep 1
+export HOME="$BASE_TMP/homeD" XDG_RUNTIME_DIR="$BASE_TMP/xdgD"
+mkdir -p "$HOME" "$XDG_RUNTIME_DIR"
+# 先以 daemon-mode 起一个正确 daemon（等价 systemd 已启动）
+SUNLOGIN_DAEMON=1 "$OUT/bin/sunlogin" >"$BASE_TMP/guiD0.log" 2>&1 &
+DAEMON_D_PID=""
+for _ in $(seq 1 40); do
+  if correct_daemon_alive; then
+    DAEMON_D_PID="$(pgrep -x awesun_daemon | head -1)"
+    break
+  fi
+  sleep 0.25
+done
+[ -n "$DAEMON_D_PID" ] || DAEMON_D_PID="0"
+# 再启动 GUI（用户视角）
+GUI_LOG_D="$BASE_TMP/guiD.log"
+D_ready="$(run_launch_and_measure reuseGUI "$GUI_LOG_D")"
+
+daemon_count_D="$(pgrep -x awesun_daemon | wc -l)"
+daemon_alive_D=0; correct_daemon_alive && daemon_alive_D=1
+same_pid_D=0
+[ "$DAEMON_D_PID" != "0" ] && pgrep -x awesun_daemon | grep -q "$DAEMON_D_PID" && same_pid_D=1
+rpc_fail_D="$(grep -c 'OnRpcConnect.*err=-1' "$GUI_LOG_D" 2>/dev/null || true)"
+gui_connected_D=0; grep -q 'isConnected: true' "$GUI_LOG_D" 2>/dev/null && gui_connected_D=1
+reuse_ok=0
+[ "$daemon_alive_D" = 1 ] && [ "$same_pid_D" = 1 ] && [ "$gui_connected_D" = 1 ] && [ "$rpc_fail_D" = 0 ] && reuse_ok=1
+
 # ---------- systemd unit 检查（用户假设） ----------
 systemd_unit=0
 find "$OUT" -name 'runawesun.service' 2>/dev/null | grep -q . && systemd_unit=1
@@ -211,5 +242,8 @@ echo "METRIC sunlogin_stale_socket_root=$stale_socket_root"
 echo "METRIC sunlogin_unit_verify=$unit_verify"
 echo "METRIC sunlogin_daemon_mode_ok=$daemon_mode_ok"
 echo "METRIC sunlogin_daemon_mode_ready_ms=$C_ready"
+echo "METRIC sunlogin_reuse_ok=$reuse_ok"
+echo "METRIC sunlogin_reuse_daemon_count=$daemon_count_D"
+echo "METRIC sunlogin_reuse_same_pid=$same_pid_D"
 
 [ "$ok" = 1 ] && exit 0 || exit 1
