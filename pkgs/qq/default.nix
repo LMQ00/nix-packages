@@ -1,11 +1,13 @@
 { lib
 , stdenv
-, fetchurl
+, curl
+, cacert
 , dpkg
 , autoPatchelfHook
 , makeShellWrapper
 , wrapGAppsHook3
 , writeShellScript
+, python3
 , alsa-lib
 , at-spi2-core
 , cups
@@ -26,14 +28,73 @@
 , libuuid
 }:
 
+let
+  version = "3.2.33";
+
+  debUrl =
+    "https://qqdl.gtimg.cn/qqfile/QQNTV2/9.9.35/release/1763096b/QQ_${version}_260902_amd64_01.deb";
+
+  # QQ Linux 自 3.2.33 起改为签名分发：qqdl.gtimg.cn 新目录直连一律 403，
+  # 需先经 im.qq.com GetSign 换取短时效签名链接（AUR linuxqq-nt 采用同一流程）。
+  # fixed-output derivation 锁定下载内容 hash，签名链接每次不同但内容稳定，
+  # 保证构建可复现；token 过期导致下载失败时重跑构建即可。
+  fetchQqDeb = writeShellScript "fetch-qq-deb.sh" ''
+    set -euo pipefail
+    url="$1"
+    output="$2"
+
+    UA="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36"
+    COOKIE_URL="https://im.qq.com/index/"
+    SIGN_URL="https://im.qq.com/http2rpc/gotrpc/noauth/trpc.qqntv2.urlsign.UrlSign/GetSign"
+
+    # 1. 从 im.qq.com/index/ 抓取 tgw_l7_route cookie
+    cookie="$(curl -fsSL -A "$UA" -c - "$COOKIE_URL" 2>/dev/null \
+      | awk '/tgw_l7_route/ {print $7; exit}')"
+    [[ -n "$cookie" ]] || { echo "fetch-qq-deb: failed to obtain tgw_l7_route cookie" >&2; exit 1; }
+
+    # 2. 调用 GetSign 换取带 sign 的短时效下载链接
+    body="$(python3 -c 'import json,sys; print(json.dumps({"url": sys.argv[1]}))' "$url")"
+    signed="$(curl -fsSL -A "$UA" \
+      -H "Content-Type: application/json" \
+      -H "Origin: https://im.qq.com" \
+      -H "Referer: https://im.qq.com/index/" \
+      -H 'x-oidb: {"uint32_command":"0x9b8e","uint32_service_type":1}' \
+      -b "tgw_l7_route=$cookie" \
+      --data-binary "$body" \
+      "$SIGN_URL" \
+      | python3 -c 'import json,sys; print(json.load(sys.stdin)["data"]["url"])')"
+    [[ -n "$signed" ]] || { echo "fetch-qq-deb: GetSign returned no data.url" >&2; exit 1; }
+
+    # 3. 经签名链接下载到输出
+    curl -fSL -A "$UA" -o "$output" "$signed"
+  '';
+
+  qqSrc = stdenv.mkDerivation {
+    pname = "qq-src";
+    inherit version;
+    src = fetchQqDeb;
+    nativeBuildInputs = [ curl python3 cacert ];
+    phases = [ "buildPhase" ];
+    outputHashAlgo = "sha256";
+    outputHashMode = "flat";
+    outputHash = "sha256-UCqXjy0Dr58hrO/EYfnR0f4JtlutYgu/zbWJp5rFO34=";
+    buildPhase = ''
+      runHook preBuild
+      $src "${debUrl}" "$out"
+      runHook postBuild
+    '';
+  };
+in
 stdenv.mkDerivation (finalAttrs: {
   pname = "qq";
-  version = "3.2.32";
+  inherit version;
 
-  src = fetchurl {
-    url = "https://qqdl.gtimg.cn/qqfile/QQNT/9.9.33/release/3f89efc5/QQ_${finalAttrs.version}_260812_amd64_01.deb";
-    hash = "sha256-0IXdiTlyJQYeufGUMI9ogSmBjtRFd36XpKChbhPXsOg=";
-  };
+  src = qqSrc;
+
+  # 3.2.33+ 的 deb 无扩展名（flat FOD 输出），显式用 dpkg-deb 解包
+  unpackPhase = ''
+    dpkg-deb -x $src .
+  '';
 
   # 禁用 QQ 内置自动更新
   # QQ 会通过 versions/config.json 检查并自动更新，把 baseVersion/curVersion
