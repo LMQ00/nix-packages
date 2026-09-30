@@ -20,6 +20,7 @@
 | [qq](https://im.qq.com/index/) | 3.2.33 | 腾讯 QQ Linux 客户端 (NT 架构) |
 | [wechat](https://weixin.qq.com/) | 4.1.13 | 微信 Linux 版 (AppImage) |
 | [baidunetdisk](https://pan.baidu.com/download) | 8.7.0 | 百度网盘 Linux 客户端 |
+| [dsh](https://github.com/deepseek-ai/deepseek-harness) | 0.2.0-rc.2 | DeepSeek 官方 Agent Harness |
 
 ## 使用方法
 
@@ -188,6 +189,7 @@ nix fmt
 - omp: [MIT](https://github.com/can1357/oh-my-pi/blob/main/LICENSE)
 - qq: 闭源商业软件 (unfree)
 - wechat: 闭源商业软件 (unfree)
+- dsh: [MIT](https://github.com/deepseek-ai/deepseek-harness/blob/main/LICENSE)
 
 ## 贡献
 

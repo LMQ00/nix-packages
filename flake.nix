@@ -55,6 +55,7 @@
           qq = callPackage ./pkgs/qq { };
           wechat = callPackage ./pkgs/wechat { };
           baidunetdisk = callPackage ./pkgs/baidunetdisk { };
+          dsh = callPackage ./pkgs/dsh { };
         };
 
       # Packages：直接可安装的包
@@ -77,6 +78,7 @@
           qq = pkgs.qq;
           wechat = pkgs.wechat;
           baidunetdisk = pkgs.baidunetdisk;
+          dsh = pkgs.dsh;
           default = pkgs.musicdl;
         }
       );
