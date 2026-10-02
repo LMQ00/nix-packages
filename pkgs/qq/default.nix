@@ -29,10 +29,10 @@
 }:
 
 let
-  version = "3.2.33";
+  version = "3.2.34";
 
   debUrl =
-    "https://qqdl.gtimg.cn/qqfile/QQNTV2/9.9.35/release/1763096b/QQ_${version}_260902_amd64_01.deb";
+    "https://qqdl.gtimg.cn/qqfile/QQNTV2/9.9.36/release/9ee04bef/QQ_${version}_260924_amd64_01.deb";
 
   # QQ Linux 自 3.2.33 起改为签名分发：qqdl.gtimg.cn 新目录直连一律 403，
   # 需先经 im.qq.com GetSign 换取短时效签名链接（AUR linuxqq-nt 采用同一流程）。
@@ -77,7 +77,7 @@ let
     phases = [ "buildPhase" ];
     outputHashAlgo = "sha256";
     outputHashMode = "flat";
-    outputHash = "sha256-UCqXjy0Dr58hrO/EYfnR0f4JtlutYgu/zbWJp5rFO34=";
+    outputHash = "sha256-Q2xl4d0oQi4SiiHL3bX+Ti5sB51/J/7CVB4BTTjMM24=";
     buildPhase = ''
       runHook preBuild
       $src "${debUrl}" "$out"
