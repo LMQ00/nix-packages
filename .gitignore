@@ -8,3 +8,4 @@ result-*
 # Pi agent
 .pi/
 .pi-subagents/
+tmp/
