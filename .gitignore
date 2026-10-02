@@ -9,3 +9,6 @@ result-*
 .pi/
 .pi-subagents/
 tmp/
+
+# DSH agent
+.dsh/
