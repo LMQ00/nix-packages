@@ -96,17 +96,40 @@ nix run github:LMQ00/nix-packages#musicdl
 
 ### sunlogin 守护进程说明
 
-sunlogin (AweSun) 的守护进程 `awesun_daemon` 由 **GUI 启动时自动拉起**
-（`sunlogin-start.sh` 负责，同一 FHS 环境内运行），无需手动管理。
+sunlogin (AweSun) 的本地服务由 `awesun_daemon` 提供，GUI 通过 `/tmp/*_16090`
+等 unix socket 与它通信。daemon 会校验客户端（`readlink /proc/<pid>/exe` 比对
+自身 exe，或用内嵌公钥校验客户端的 `.sign` 段签名），因此有两条硬约束：
 
-**不要**通过 systemd 常驻该 daemon：daemon 会校验客户端的 exe 路径
-（`readlink /proc/<pid>/exe` + ELF 检查），systemd 以 root 在宿主
-user namespace 启动的 daemon 与 GUI（bwrap 独立 user namespace）跨
-namespace 校验失败，会拒绝 GUI 连接（日志 `Verify client failed`），
-导致界面持续"网络不可用"。让 GUI 自管理 daemon（同 namespace）即可
-正常连接。
+1. **不要改写 deb 内的二进制**：`.sign` 段是 RSA 签名，覆盖
+   `MD5(整个文件去掉 .sign 段)`。任何 patchelf / autoPatchelfHook / strip 都会让
+   签名失效，daemon 会拒绝 GUI 连接（日志 `[rpc/TcpSocket] Verify client failed!`），
+   界面停在「正在连接服务...」。本包不做任何字节改写（运行库经 FHS rootfs 与
+   `LD_LIBRARY_PATH` 提供），构建期还会用内嵌公钥自校验，改坏即构建失败。
+2. **跨 bwrap user namespace 的 `readlink /proc/<pid>/exe` 会 EPERM**，因此
+   daemon 与 GUI 必须"同沙箱"，或 daemon 以 **root**（初始 user namespace，
+   拥有 `CAP_SYS_PTRACE`）运行。KDE 每次启动都是一个新 transient unit（新沙箱），
+   所以常驻的用户级 daemon 无法服务下一次启动的 GUI。
 
-包内 `runawesun.service` 仅为兼容保留，不应启用。
+另外，界面里的登录页 / 设备页等是内嵌 WebKit 视图，依赖已在 `libs` 与
+`sunlogin-start.sh` 中备好：`webkitgtk_4_1`（缺则页面一直转圈，
+日志 `WEBKIT_LOAD_FAILED`）与 `glib-networking` 的 GIO TLS 模块
+（缺则 HTTPS 页面白屏，页面内报 `TLS support is not available`，
+脚本里用 `GIO_EXTRA_MODULES` 指向它）。
+
+推荐（可无人值守、关掉 GUI 也能被远控）：以系统服务方式常驻 root daemon：
+
+```nix
+# configuration.nix（系统侧，不是 home-manager）
+{
+  systemd.packages = [ inputs.nix-packages.packages.${system}.sunlogin ];
+  systemd.services.runawesun.wantedBy = [ "multi-user.target" ];
+}
+```
+
+兜底（不启用上面的服务时）：`sunlogin-start.sh` 会清掉跨沙箱残留的用户 daemon，
+在本次 GUI 自己的沙箱内起一个同沙箱 daemon，并在 GUI 退出时一并回收
+（因此这种情况下"关掉 GUI"就等于服务下线）。若检测到已有 root daemon，
+脚本直接复用它、不做任何清理。
 
 ### 使用 Overlay
 
