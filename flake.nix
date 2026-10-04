@@ -56,6 +56,7 @@
           wechat = callPackage ./pkgs/wechat { };
           baidunetdisk = callPackage ./pkgs/baidunetdisk { };
           dsh = callPackage ./pkgs/dsh { };
+          open-orpheus = callPackage ./pkgs/open-orpheus { };
         };
 
       # Packages：直接可安装的包
@@ -79,6 +80,7 @@
           wechat = pkgs.wechat;
           baidunetdisk = pkgs.baidunetdisk;
           dsh = pkgs.dsh;
+          open-orpheus = pkgs.open-orpheus;
           default = pkgs.musicdl;
         }
       );

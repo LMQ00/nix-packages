@@ -2,15 +2,15 @@
 
 ## Project Overview
 
-Personal Nix package collection managed as a single-input Flake. It exposes **15** packaged applications/libraries through both a reusable overlay and `packages.<system>` outputs; `musicdl` is the default package. This repo packages third-party software — no application code is authored here.
+Personal Nix package collection managed as a single-input Flake. It exposes **16** packaged applications/libraries through both a reusable overlay and `packages.<system>` outputs; `musicdl` is the default package. This repo packages third-party software — no application code is authored here.
 
 ## Architecture & Data Flow
 
 ```text
 flake.lock → nixpkgs-unstable (single input, pinned revision)
 flake.nix → pkgsForSystem: import nixpkgs { allowUnfree; permittedInsecurePackages=["libsoup-2.74.3"]; overlays=[self.overlays.default]; }
-          → overlays.default: callPackage ./pkgs/<name> for all 14 packages
-          → packages.<system>: re-exports the same 14 as pkgs.<name>; default = pkgs.musicdl
+          → overlays.default: callPackage ./pkgs/<name> for all 16 packages
+          → packages.<system>: re-exports the same 16 as pkgs.<name>; default = pkgs.musicdl
           → devShells.<system>.default: nixpkgs-fmt + nil
 nix build/run → evaluated derivation → Nix store output / wrapped executable
 ```
@@ -20,7 +20,8 @@ nix build/run → evaluated derivation → Nix store output / wrapped executable
   - **Python** (musicdl, construct, pymp4, pywidevine): `buildPythonApplication`/`buildPythonPackage` + `pyproject`, `fetchPypi`/`fetchFromGitHub`.
   - **Node/pnpm** (sub-store): `pnpm.configHook` + `pnpm.fetchDeps`, `makeWrapper` over `nodejs`.
   - **Node/npm** (dsh): `buildNpmPackage` + `npmDepsHash` (fetcherVersion 2) with a checked-in `package-lock.json`; the runtime wrapper uses a `nodejs-slim` copy with `zerocallusedregs` hardening disabled (see the comment in `pkgs/dsh/default.nix`).
-  - **Prebuilt desktop**: `.deb` + `autoPatchelfHook` (qq, aurevoy, hanako), AppImage (wechat, astudio-linux), Wine prefix (wecom-wine), `buildFHSEnv` (sunlogin), Docker-container wrapper (baidunetdisk), release binary + dynamic-linker wrapper (omp).
+  - **Prebuilt desktop**: `.deb` + `autoPatchelfHook` (qq, aurevoy, hanako, open-orpheus), AppImage (wechat, astudio-linux), Wine prefix (wecom-wine), `buildFHSEnv` (sunlogin), Docker-container wrapper (baidunetdisk), release binary + dynamic-linker wrapper (omp).
+  - **Electron `.deb`** (hanako, open-orpheus): the wrapper must pass `--disable-setuid-sandbox` (the store cannot hold the setuid `chrome-sandbox`, and Chromium aborts when it finds an unconfigured SUID helper) and prefix `XDG_DATA_DIRS` with `gsettings-desktop-schemas` (otherwise GTK logs `g_settings_schema_source_lookup: assertion 'source != NULL' failed`).
 - The flake targets 4 systems (x86_64-linux, aarch64-linux, x86_64-darwin, aarch64-darwin), but only `omp` and `astudio` build outside x86_64-linux; other packages declare `meta.platforms` accordingly.
 
 ## Key Directories

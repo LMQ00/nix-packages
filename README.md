@@ -21,6 +21,7 @@
 | [wechat](https://weixin.qq.com/) | 4.1.13 | 微信 Linux 版 (AppImage) |
 | [baidunetdisk](https://pan.baidu.com/download) | 8.7.0 | 百度网盘 Linux 客户端 |
 | [dsh](https://github.com/deepseek-ai/deepseek-harness) | 0.2.0-rc.2 | DeepSeek 官方 Agent Harness |
+| [open-orpheus](https://github.com/YUCLing/open-orpheus) | 0.19.1 | 网易云音乐官方客户端网页资源（Orpheus 宿主）的 Linux 运行环境 |
 
 ## 使用方法
 
@@ -213,6 +214,7 @@ nix fmt
 - qq: 闭源商业软件 (unfree)
 - wechat: 闭源商业软件 (unfree)
 - dsh: [MIT](https://github.com/deepseek-ai/deepseek-harness/blob/main/LICENSE)
+- open-orpheus: [MIT](https://github.com/YUCLing/open-orpheus/blob/main/LICENSE)（不含网易所有的资源文件，首次启动时由程序从网易 CDN 下载到用户数据目录）
 
 ## 贡献
 
