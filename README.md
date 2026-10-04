@@ -132,6 +132,29 @@ sunlogin (AweSun) 的本地服务由 `awesun_daemon` 提供，GUI 通过 `/tmp/*
 （因此这种情况下"关掉 GUI"就等于服务下线）。若检测到已有 root daemon，
 脚本直接复用它、不做任何清理。
 
+### baidunetdisk 说明
+
+百度网盘官方 deb 里的 Electron 22 运行时与百度自有 C++ 库（`libbrowserengine`、
+`netdisk_service` 等）一旦被 patchelf / strip 改写就会确定性崩溃（SIGTRAP/int3），
+因此本包不做任何字节改写，而是把 deb 原样放进 `buildFHSEnv`
+（rootfs 的 `ldconfig` 负责解析依赖），与向日葵同属"必须保留原始二进制"的一类。
+两点配套：
+
+- nixpkgs 已删除 `gtkmm2`，而 `libbrowserengine.so` 需要 `libgtkmm-2.4.so.1`，
+  所以包内内联了 gtkmm 2.24.5（`gtkmm2-legacy`）。
+- `includeClosures = true` 是必需的：默认只合并 targetPkgs 自身输出，会漏掉
+  `libXt`、`libgbm` 这类传递依赖，表现为某个 `.node` 模块 dlopen 失败。
+
+若客户端被 `kill -9` 等硬杀后再次启动**只见进程、不弹窗口**，删掉残留的单例锁即可
+（Chromium 的 `Singleton*` 指向已死进程时，百度客户端会停在没有窗口的状态）：
+
+```bash
+rm -f ~/.config/baidunetdisk/Singleton*
+```
+
+首次运行需要用你的百度账号登录；未登录时日志里的
+`browser_engine_fetch_file_list fail 5` 属正常现象。
+
 ### 使用 Overlay
 
 Overlay 提供了更灵活的集成方式：
