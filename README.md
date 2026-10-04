@@ -21,6 +21,7 @@
 | [wechat](https://weixin.qq.com/) | 4.1.13 | 微信 Linux 版 (AppImage) |
 | [baidunetdisk](https://pan.baidu.com/download) | 8.7.0 | 百度网盘 Linux 客户端 |
 | [dsh](https://github.com/deepseek-ai/deepseek-harness) | 0.2.0-rc.2 | DeepSeek 官方 Agent Harness |
+| [ncm-cli](https://www.npmjs.com/package/@music163/ncm-cli) | 0.1.7 | 网易云音乐命令行工具（搜索/播放/歌单/TUI 播放器） |
 
 ## 使用方法
 
@@ -213,6 +214,7 @@ nix fmt
 - qq: 闭源商业软件 (unfree)
 - wechat: 闭源商业软件 (unfree)
 - dsh: [MIT](https://github.com/deepseek-ai/deepseek-harness/blob/main/LICENSE)
+- ncm-cli: [MIT](https://www.npmjs.com/package/@music163/ncm-cli)
 
 ## 贡献
 
