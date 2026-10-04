@@ -20,8 +20,8 @@ nix build/run → evaluated derivation → Nix store output / wrapped executable
   - **Python** (musicdl, construct, pymp4, pywidevine): `buildPythonApplication`/`buildPythonPackage` + `pyproject`, `fetchPypi`/`fetchFromGitHub`.
   - **Node/pnpm** (sub-store): `pnpm.configHook` + `pnpm.fetchDeps`, `makeWrapper` over `nodejs`.
   - **Node/npm** (dsh): `buildNpmPackage` + `npmDepsHash` (fetcherVersion 2) with a checked-in `package-lock.json`; the runtime wrapper uses a `nodejs-slim` copy with `zerocallusedregs` hardening disabled (see the comment in `pkgs/dsh/default.nix`).
-  - **Prebuilt desktop**: `.deb` + `autoPatchelfHook` (qq, aurevoy, hanako, open-orpheus), AppImage (wechat, astudio-linux), Wine prefix (wecom-wine), `buildFHSEnv` (sunlogin), Docker-container wrapper (baidunetdisk), release binary + dynamic-linker wrapper (omp).
-  - **Electron `.deb`** (hanako, open-orpheus): the wrapper must pass `--disable-setuid-sandbox` (the store cannot hold the setuid `chrome-sandbox`, and Chromium aborts when it finds an unconfigured SUID helper) and prefix `XDG_DATA_DIRS` with `gsettings-desktop-schemas` (otherwise GTK logs `g_settings_schema_source_lookup: assertion 'source != NULL' failed`).
+  - **Prebuilt desktop**: `.deb` + `autoPatchelfHook` (qq, aurevoy, hanako, open-orpheus), AppImage (wechat, astudio-linux), Wine prefix (wecom-wine), `buildFHSEnv` (sunlogin, baidunetdisk), release binary + dynamic-linker wrapper (omp).
+  - **Electron `.deb`** (hanako, open-orpheus): the wrapper must pass `--disable-setuid-sandbox` (the store cannot hold the setuid `chrome-sandbox`, and Chromium aborts when it finds an unconfigured SUID helper) and prefix `XDG_DATA_DIRS` with `gsettings-desktop-schemas` (otherwise GTK logs `g_settings_schema_source_lookup: assertion 'source != NULL' failed`). baidunetdisk also ships Electron 22 but must **not** be patched at all: its Baidu-owned C++ libraries trap (SIGTRAP/int3) once rewritten, so it runs the unmodified deb inside `buildFHSEnv`, where the rootfs `ldconfig` resolves every dependency.
 - The flake targets 4 systems (x86_64-linux, aarch64-linux, x86_64-darwin, aarch64-darwin), but only `omp` and `astudio` build outside x86_64-linux; other packages declare `meta.platforms` accordingly.
 
 ## Key Directories
@@ -64,7 +64,7 @@ nixpkgs-fmt pkgs/musicdl/default.nix flake.nix
 ## Code Conventions & Common Patterns
 
 - Keep package names and directories aligned: `pkgs/foo/default.nix` is exported as `foo`.
-- Use an argument set and request only dependencies the derivation uses; order `lib` first, then `stdenv`/`stdenvNoCC`, fetchers, build hooks, runtime libs. Prefer standard fetchers (`fetchurl`, `fetchFromGitHub`, `fetchPypi`) with fixed SRI hashes (`sha256-...`; the `sha256:` colon form in astudio and bare hex in baidunetdisk are legacy).
+- Use an argument set and request only dependencies the derivation uses; order `lib` first, then `stdenv`/`stdenvNoCC`, fetchers, build hooks, runtime libs. Prefer standard fetchers (`fetchurl`, `fetchFromGitHub`, `fetchPypi`) with fixed SRI hashes (`sha256-...`; the `sha256:` colon form in astudio is legacy).
 - Define `pname` and `version` near the top. Binary packages use `finalAttrs` (qq, aurevoy, sub-store) or `let`-bound values with `inherit` (omp, astudio, wechat, baidunetdisk); Python packages use `rec`.
 - Separate `nativeBuildInputs` (hooks, dpkg, makeWrapper, pnpm) from `buildInputs` (runtime libraries). Prefer standard hooks (`autoPatchelfHook`, `makeWrapper`, `wrapProgram`, `appimageTools`, `pnpm.configHook`) over ad-hoc environment mutation.
 - **Wrappers are the established boundary** for runtime-only dependencies, PATH/RPATH fixes, and per-user state (e.g. Wine prefix copy). Keep wrapper behavior explicit and minimal. Distinct wrapper idioms in use:
@@ -73,8 +73,8 @@ nixpkgs-fmt pkgs/musicdl/default.nix flake.nix
   - `makeShellWrapper` with `--prefix`/`--set`/`--run` — qq (XDG_DATA_DIRS, LD_PRELOAD, ozone flags; disables auto-update by writing a read-only `versions/config.json`).
   - `wrapProgram` in `postFixup` — musicdl (`--prefix PATH : ${lib.makeBinPath [ ffmpeg nodejs ]}`).
   - `appimageTools.wrapAppImage`/`wrapType2` — wechat, astudio (Linux AppImages need FUSE: `programs.fuse.enable`).
-  - `writeShellScript` + `substituteInPlace` placeholders — baidunetdisk (`@DEB@`), wecom-wine (`@WINEPREFIX_TEMPLATE@`), hanako outer layer (`@out@`).
-  - `buildFHSEnv` — sunlogin only; it is the sanctioned exception, **not a general pattern**. baidunetdisk's Docker-container wrapper is a unique case (patchelf SIGTRAPs on its Electron stack).
+  - `writeShellScript` + `substituteInPlace` placeholders — wecom-wine (`@WINEPREFIX_TEMPLATE@`), hanako outer layer (`@out@`).
+  - `buildFHSEnv` — sunlogin (the `.sign` client check and hardcoded `/usr/local/awesun` path) and baidunetdisk (the deb expects an Ubuntu FHS layout and its binaries must stay byte-identical). A sanctioned exception, **not a general pattern**: run library resolution through the rootfs `ldconfig` (targetPkgs) and copy the payload into the rootfs as a real directory (`extraBuildCommands`) instead of patching binaries or symlinking store paths.
 - Use `lib.makeLibraryPath`/`lib.makeBinPath` for LD_LIBRARY_PATH/PATH; `map lib.getLib` for `runtimeDependencies`.
 - `doCheck = false` is the norm (5 of 14) because upstream tests are unsuitable for the Nix sandbox; give a concrete reason when adding it (e.g. sub-store: tests need network). Bare `# 禁用测试` comments are discouraged; no package enables checks.
 - Every binary package sets `meta.sourceProvenance = with sourceTypes; [ binaryNativeCode ];` (missing in wecom-wine and sunlogin — add it). Meta blocks include description, homepage, license, `mainProgram` (apps), `platforms`, and `maintainers`.
@@ -90,7 +90,7 @@ nixpkgs-fmt pkgs/musicdl/default.nix flake.nix
 - `pkgs/wecom-wine/default.nix` — Wine prefix template and first-run copy behavior.
 - `pkgs/astudio/default.nix` — platform-conditional AppImage/macOS bundle.
 - `pkgs/omp/default.nix` — multi-platform release binary with dynamic-linker wrapper.
-- `pkgs/baidunetdisk/default.nix` — newest package; Docker-container wrapper.
+- `pkgs/baidunetdisk/default.nix` — official deb kept byte-identical inside `buildFHSEnv`, plus an inlined `gtkmm2-legacy` (2.24.5) because nixpkgs removed `gtkmm2` while Baidu's `libbrowserengine.so` still needs `libgtkmm-2.4.so.1`.
 - `README.md`, `FLAKE_LOCK.md` — public docs; FLAKE_LOCK.md covers lockfile maintenance.
 
 ## Runtime/Tooling Preferences
