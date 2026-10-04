@@ -1,3 +1,7 @@
+# GTK2 C++ 栈的名字随 nixpkgs 版本变化：2026-08 起 nixpkgs 把 glibmm/cairomm/pangomm/
+# libsigcxx 这些无 ABI 后缀的旧名改成 throw，只保留 glibmm_2_4 / cairomm_1_0 /
+# pangomm_1_4 / libsigcxx_2_0；而本仓库 pin 仍是旧名。故每个库留两个候选形参
+# （缺属性时 callPackage 不会传，未传的默认 null），运行时挑第一个可用的，见 pick。
 { lib
 , stdenv
 , fetchurl
@@ -7,11 +11,15 @@
 , writeShellScript
   # GTK2 C++ 栈：libbrowserengine.so（百度自有内嵌浏览器引擎）的运行期依赖
 , gtk2
-, glibmm
-, cairomm
-, pangomm
 , atkmm
-, libsigcxx
+, glibmm ? null
+, glibmm_2_4 ? null
+, cairomm ? null
+, cairomm_1_0 ? null
+, pangomm ? null
+, pangomm_1_4 ? null
+, libsigcxx ? null
+, libsigcxx_2_0 ? null
   # Electron 22 / 百度自有库依赖
 , gtk3
 , libgbm
@@ -72,6 +80,27 @@
 # 运行库由 targetPkgs 合并进 rootfs 的 /usr/lib（ldconfig 建缓存），
 # 因此不需要 LD_LIBRARY_PATH/RPATH 修补。
 let
+  # 候选依赖里 null（此 nixpkgs 无该属性）与旧名的 throw 都会被挡掉。
+  # 注意 tryEval 只接得住 throw/assert，接不住 "expected a set but found null" 这类
+  # 求值器类型错误，所以先用 isAttrs 短路。
+  usable = x:
+    let
+      r = builtins.tryEval (builtins.isAttrs x && builtins.seq x.outPath true);
+    in
+    r.success && r.value;
+
+  pick = what: candidates:
+    let
+      found = lib.findFirst usable null candidates;
+    in
+    if found == null then throw "baidunetdisk: nixpkgs 中没有可用的 ${what}" else found;
+
+  # let 是递归的，绑定名不能与形参同名
+  glibmmPkg = pick "glibmm（glibmm_2_4 / glibmm）" [ glibmm_2_4 glibmm ];
+  cairommPkg = pick "cairomm（cairomm_1_0 / cairomm）" [ cairomm_1_0 cairomm ];
+  pangommPkg = pick "pangomm（pangomm_1_4 / pangomm）" [ pangomm_1_4 pangomm ];
+  libsigcxxPkg = pick "libsigcxx（libsigcxx_2_0 / libsigcxx）" [ libsigcxx_2_0 libsigcxx ];
+
   version = "8.7.0";
 
   src = fetchurl {
@@ -105,11 +134,11 @@ let
     nativeBuildInputs = [ pkg-config ];
 
     propagatedBuildInputs = [
-      glibmm
+      glibmmPkg
       gtk2
       atkmm
-      cairomm
-      pangomm
+      cairommPkg
+      pangommPkg
     ];
 
     # 上游 check 需要图形环境；此包仅作 libbrowserengine 的运行期依赖
@@ -182,11 +211,11 @@ let
     gtkmm2-legacy
     gtk2
     gtk3
-    glibmm
-    cairomm
-    pangomm
+    glibmmPkg
+    cairommPkg
+    pangommPkg
     atkmm
-    libsigcxx
+    libsigcxxPkg
     atk
     at-spi2-atk
     at-spi2-core
