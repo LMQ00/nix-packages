@@ -56,7 +56,6 @@
           wechat = callPackage ./pkgs/wechat { };
           baidunetdisk = callPackage ./pkgs/baidunetdisk { };
           dsh = callPackage ./pkgs/dsh { };
-          ncm-cli = callPackage ./pkgs/ncm-cli { };
         };
 
       # Packages：直接可安装的包
@@ -80,7 +79,6 @@
           wechat = pkgs.wechat;
           baidunetdisk = pkgs.baidunetdisk;
           dsh = pkgs.dsh;
-          ncm-cli = pkgs.ncm-cli;
           default = pkgs.musicdl;
         }
       );
