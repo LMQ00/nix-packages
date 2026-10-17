@@ -57,6 +57,7 @@
           baidunetdisk = callPackage ./pkgs/baidunetdisk { };
           dsh = callPackage ./pkgs/dsh { };
           open-orpheus = callPackage ./pkgs/open-orpheus { };
+          cyberstrike = callPackage ./pkgs/cyberstrike { };
         };
 
       # Packages：直接可安装的包
@@ -81,6 +82,7 @@
           baidunetdisk = pkgs.baidunetdisk;
           dsh = pkgs.dsh;
           open-orpheus = pkgs.open-orpheus;
+          cyberstrike = pkgs.cyberstrike;
           default = pkgs.musicdl;
         }
       );
