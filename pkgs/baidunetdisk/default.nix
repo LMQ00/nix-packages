@@ -68,7 +68,7 @@
 , libxtst
 }:
 
-# 百度网盘 8.7.0（官方 deb 在 FHS 环境中原生运行）
+# 百度网盘 8.9.7（官方 deb 在 FHS 环境中原生运行）
 #
 # 为什么不 patchelf：deb 内的 Electron 22 prebuilt、百度自有 C++ 库
 # （libbrowserengine/libkernel/netdisk_service 等）与自绘 UI 强绑定 Ubuntu 运行时。
@@ -94,6 +94,16 @@ let
       found = lib.findFirst usable null candidates;
     in
     if found == null then throw "baidunetdisk: nixpkgs 中没有可用的 ${what}" else found;
+
+  # nixpkgs 2026-11 起把 gtk2 标为 meta.problems.broken（计划 NixOS 27.05 移除），
+  # 求值时默认直接报错。但百度自有 libbrowserengine.so 的 NEEDED 里写死
+  # libgtk-x11-2.0.so.0 / libgdk-x11-2.0.so.0，没有 gtk3 可替代，故本包内显式
+  # 清掉该标记（只用 overrideAttrs 改 meta，不碰构建，也不改全局 problems 策略）。
+  gtk2Pkg = gtk2.overrideAttrs (prev: {
+    meta = (prev.meta or { }) // {
+      problems = { };
+    };
+  });
 
   # let 是递归的，绑定名不能与形参同名
   glibmmPkg = pick "glibmm（glibmm_2_4 / glibmm）" [ glibmm_2_4 glibmm ];
@@ -135,7 +145,7 @@ let
 
     propagatedBuildInputs = [
       glibmmPkg
-      gtk2
+      gtk2Pkg
       atkmm
       cairommPkg
       pangommPkg
@@ -209,7 +219,7 @@ let
   libs = [
     stdenv.cc.cc.lib
     gtkmm2-legacy
-    gtk2
+    gtk2Pkg
     gtk3
     glibmmPkg
     cairommPkg
