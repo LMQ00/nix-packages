@@ -6,15 +6,27 @@
 , makeWrapper
 }:
 
+let
+  # 2.44.6 起上游把 shoutrrr-ts 以 GitHub tarball 形式依赖，但 lockfile 里该
+  # 条目只有 tarball 没有 integrity，pnpm >= 10.34.1 会在抓取阶段直接以
+  # ERR_PNPM_MISSING_TARBALL_INTEGRITY 中止（--trust-lockfile 只跳过 lockfile
+  # 供应链校验，跳不过抓取阶段的断言）。故给该条目补上实测的 sha512：pnpm 会
+  # 校验下载内容，比原来完全不校验更严格；内容本身仍由 pnpmDeps 的
+  # fixed-output hash 兜底。上游修好 lockfile 后这段可以删掉。
+  lockfileIntegrityFix = ''
+    sed -i 's|resolution: {tarball: https://github.com/Delusions6515/shoutrrr-ts/releases/download/v0.2.0/shoutrrr-ts-0.2.0.tgz}|resolution: {integrity: sha512-K/Cj26Dbg1epa163VfprhsP50aFmGTi71ocI9ch0uSZFdUr+P11bgLGdk88bX2w/w/nlwm8jZJ5dCugfYhqDUw==, tarball: https://github.com/Delusions6515/shoutrrr-ts/releases/download/v0.2.0/shoutrrr-ts-0.2.0.tgz}|' pnpm-lock.yaml
+  '';
+in
+
 stdenv.mkDerivation (finalAttrs: {
   pname = "sub-store";
-  version = "2.43.1";
+  version = "2.44.6";
 
   src = fetchFromGitHub {
     owner = "sub-store-org";
     repo = "Sub-Store";
     rev = finalAttrs.version;
-    hash = "sha256-qeO3iEtIXiX1bxE2XOJem8UU5lxr9KJsjlKEpZP8cKg=";
+    hash = "sha256-fS1N6sHFp+t+fPrb8yyLZIVesIYEDxQlIa2Nw9F3Fbc=";
   };
 
   # Sub-Store 的 Node.js 项目在 backend 子目录中
@@ -31,9 +43,13 @@ stdenv.mkDerivation (finalAttrs: {
   pnpmDeps = pnpm.fetchDeps {
     inherit (finalAttrs) pname version src;
     sourceRoot = "source/backend";
-    hash = "sha256-AzsAFqLYzOm3qvudOd/17YzQwAzX3NjVimU1Qgo+Gas=";
+    hash = "sha256-KPH5h9ofuyu0PZlSSE0PjI/0yYFTKs72Q10h0y+KF74=";
     fetcherVersion = 4;
+    prePnpmInstall = lockfileIntegrityFix;
   };
+
+  # 同上：构建阶段的 pnpm install 也要读这份 lockfile，故同样先修一遍。
+  postPatch = lockfileIntegrityFix;
 
   buildPhase = ''
     runHook preBuild

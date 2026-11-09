@@ -101,11 +101,11 @@ let
   pangommPkg = pick "pangomm（pangomm_1_4 / pangomm）" [ pangomm_1_4 pangomm ];
   libsigcxxPkg = pick "libsigcxx（libsigcxx_2_0 / libsigcxx）" [ libsigcxx_2_0 libsigcxx ];
 
-  version = "8.7.0";
+  version = "8.9.7";
 
   src = fetchurl {
     url = "https://pkg-ant.baidu.com/issue/netdisk/LinuxGuanjia/${version}/baidunetdisk_${version}_amd64.deb";
-    hash = "sha256-7HHCrRFRYJ/Q2LhtlRhMC0V9bbWqGIYeCxX8I8z+Afc=";
+    hash = "sha256-bApd9P6Q9/GqXgfppwROPk0bbMqnvqvcH3+cwl+jsxw=";
   };
 
   # ── gtkmm 2.24.5（内联）──────────────────────────────────────────────────
