@@ -23,6 +23,7 @@
 | [dsh](https://github.com/deepseek-ai/deepseek-harness) | 0.2.0-rc.2 | DeepSeek 官方 Agent Harness |
 | [open-orpheus](https://github.com/YUCLing/open-orpheus) | 0.20.0 | 网易云音乐官方客户端网页资源（Orpheus 宿主）的 Linux 运行环境 |
 | [cyberstrike](https://github.com/CyberStrikeus/CyberStrike) | 2.0.0 | 面向攻防安全的开源 AI Agent（自动化渗透测试） |
+| [totk-recomp](https://github.com/valentderah/totk-pc-recomp) | 0.4.0 | 《王国之泪》静态再编译安装器（用自己的游戏文件在本地构建，需 FHS 环境运行） |
 
 ## 使用方法
 
@@ -156,6 +157,29 @@ rm -f ~/.config/baidunetdisk/Singleton*
 首次运行需要用你的百度账号登录；未登录时日志里的
 `browser_engine_fetch_file_list fail 5` 属正常现象。
 
+### totk-recomp 说明
+
+本包只打包上游的 **安装器**（Linux AppImage），不含任何游戏数据。安装器需要
+你自己的游戏本体（NSP/XCI/NSZ/XCZ）和对应版本更新（1.1.0 / 1.2.1 / 1.4.3）、
+本机 `prod.keys`，在本地把你的文件编译成一个原生 x86-64 的 `totk`——首次安装
+峰值约 36 GiB，装好后游戏在安装目录里独立运行，不进 Nix store。
+
+两个入口：
+
+- `totk-recomp`：安装器图形界面（与原 AppImage 相同的窗口）。
+- `totk-recomp-game <安装目录>`：运行安装器构建出来的 `totk`。
+
+为什么需要第二个入口：安装出来的 `totk` 是普通 FHS 二进制，`NEEDED` 里只有
+libc 和 `libvulkan.so.1`（SDL3 由安装器拷到它旁边，链接时写了 `$ORIGIN` rpath），
+但 Vulkan loader 以及运行时 dlopen 的 X11/Wayland/ALSA/pulse 都必须由文件系统
+提供；NixOS 的 nix-ld 默认库集不含这些，直接运行会
+`error while loading shared libraries: libvulkan.so.1`。所以本包给游戏单独的
+`buildFHSEnv`，按安装目录启动。
+
+Linux 侧还有一条上游要求：内核 6.7+（写监视用 userfaultfd 的异步写保护；
+更旧的内核会警告并退化为整块上传）、Vulkan 1.3 且支持
+`VK_EXT_external_memory_host`、glibc 2.34+。
+
 ### 使用 Overlay
 
 Overlay 提供了更灵活的集成方式：
@@ -241,6 +265,7 @@ nix fmt
 - dsh: [MIT](https://github.com/deepseek-ai/deepseek-harness/blob/main/LICENSE)
 - open-orpheus: [MIT](https://github.com/YUCLing/open-orpheus/blob/main/LICENSE)（不含网易所有的资源文件，首次启动时由程序从网易 CDN 下载到用户数据目录）
 - cyberstrike: [AGPL-3.0-only](https://github.com/CyberStrikeus/CyberStrike/blob/main/LICENSE)
+- totk-recomp: [MIT](https://github.com/valentderah/totk-pc-recomp/blob/main/LICENSE)（不含任何游戏数据；安装器内捆绑 LLVM/Python/Steam Runtime sysroot，见上游 THIRD_PARTY_NOTICES.md）
 
 ## 贡献
 

@@ -58,6 +58,7 @@
           dsh = callPackage ./pkgs/dsh { };
           open-orpheus = callPackage ./pkgs/open-orpheus { };
           cyberstrike = callPackage ./pkgs/cyberstrike { };
+          totk-recomp = callPackage ./pkgs/totk-recomp { };
         };
 
       # Packages：直接可安装的包
@@ -83,6 +84,7 @@
           dsh = pkgs.dsh;
           open-orpheus = pkgs.open-orpheus;
           cyberstrike = pkgs.cyberstrike;
+          totk-recomp = pkgs.totk-recomp;
           default = pkgs.musicdl;
         }
       );
