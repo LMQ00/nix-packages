@@ -219,6 +219,14 @@ let
         exit 2
       fi
       cd "$dir" || exit 2
+      # NVIDIA 驱动的帧呈现平滑：驱动把不规则帧时间摊平到显示节拍上，
+      # 高帧率下抖动更小。其他驱动忽略这两个变量。
+      export NVPRESENT_ENABLE_SMOOTH_MOTION=1
+      # 该层默认从异步计算队列呈现，第三方叠加层（MangoHud）会因此卡死；
+      # 官方文档给的解法是让它改从图形队列呈现。挂在 MangoHud 下时才付这点开销。
+      if [ -n "''${MANGOHUD-}" ] || [ -n "''${MANGOHUD_CONFIG-}" ]; then
+        export NVPRESENT_QUEUE_FAMILY=1
+      fi
       exec ./totk "$@"
     '';
   };
