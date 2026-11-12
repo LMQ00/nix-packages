@@ -4,6 +4,7 @@
 , buildFHSEnv
 , symlinkJoin
 , writeShellScript
+, writeTextFile
   # 安装器窗口（AppImage 自带的 Tk 9 + Xft）与游戏构建、游戏运行需要的库
 , vulkan-loader
 , libx11
@@ -28,6 +29,8 @@
 , xdg-utils
   # SDL3 在 Linux 上经 libudev 枚举 hidraw 手柄，缺它 SDL3 会关掉 udev 集成
 , udev
+  # 设置菜单（Esc/F1）的中文、日文、韩文字形取自系统的 NotoSansCJK
+, wqy_zenhei
 }:
 
 let
@@ -146,6 +149,25 @@ let
     '';
   };
 
+  # 游戏的桌面入口。Exec 不带参数：wrapper 会去 $HOME/.totk 找安装目录，
+  # 因此这里不需要写死任何用户名或家目录路径。
+  gameDesktop = writeTextFile {
+    name = "${pname}-game.desktop";
+    destination = "/share/applications/${pname}-game.desktop";
+    text = ''
+      [Desktop Entry]
+      Type=Application
+      Name=TotK Recomp
+      Name[zh_CN]=塞尔达传说 王国之泪
+      Comment=Runs the game the setup built in ~/.totk
+      Comment[zh_CN]=运行安装器构建好的游戏（~/.totk）
+      Exec=${pname}-game
+      Icon=${pname}
+      Categories=Game;
+      Terminal=false
+    '';
+  };
+
   # 安装出来的 totk 是普通 FHS 二进制：NEEDED 里只有 libc 和 libvulkan.so.1，SDL3
   # 被安装器拷到 totk 旁边（链接时写了 $ORIGIN rpath），但 Vulkan loader、以及
   # 运行时 dlopen 的 X11/Wayland/ALSA/pulse 都要由文件系统提供。NixOS 的 nix-ld
@@ -157,18 +179,43 @@ let
 
     targetPkgs = gamePkgs;
 
+    # 设置菜单（Esc/F1）的界面文字由 totk 自己用 stb_truetype 从系统字体渲染，
+    # 它只认 NotoSansCJK 的几个发行版路径；游戏内文本走 shared-fonts 的 BFTTF，
+    # 与这里无关。缺这个文件时菜单里中文全是问号。放 WQY 正黑：只有 glyf 轮廓
+    # （totk 的字体解析器没有 CFF/CFF2），中/繁/日/韩字形齐全。
+    extraBuildCommands = ''
+      mkdir -p $out/usr/share/fonts/noto-cjk
+      for f in ${wqy_zenhei}/share/fonts/wqy-zenhei.ttc \
+               ${wqy_zenhei}/share/fonts/truetype/wqy-zenhei.ttc; do
+        [ -f "$f" ] && cp "$f" $out/usr/share/fonts/noto-cjk/NotoSansCJK-Regular.ttc && break
+      done
+    '';
+
+    # 桌面入口：Exec 只写命令名，安装目录由 wrapper 在运行时取 $HOME/.totk，
+    # 这样 desktop 文件里没有任何用户名或绝对家目录，可以直接进应用菜单和桌面。
+    extraInstallCommands = ''
+      install -Dm644 ${gameDesktop}/share/applications/${pname}-game.desktop \
+        $out/share/applications/${pname}-game.desktop
+    '';
+
+    # 不带参数时启动 $HOME/.totk：桌面图标据此调用，无需把家目录写进 desktop 文件。
     runScript = writeShellScript "${pname}-game" ''
       usage() {
-        echo "usage: ${pname}-game [--] <install folder> [game arguments...]" >&2
-        echo "  <install folder> is the folder the setup built, holding totk and libSDL3.so.0" >&2
+        echo "usage: ${pname}-game [--] [<install folder>] [game arguments...]" >&2
+        echo "  <install folder> defaults to ~/.totk, the folder the setup built" >&2
       }
       # -- 之后即使安装目录名以 - 开头也不会被当成选项
       if [ "''${1-}" = "--" ]; then shift; fi
-      [ $# -lt 1 ] && { usage; exit 2; }
-      dir="$1"
-      shift
+      # 没给目录就用 ~/.totk；给了就必须是该目录，免得打错路径却静默跑到别处
+      if [ $# -eq 0 ]; then
+        dir="''${HOME}/.totk"
+      else
+        dir="$1"
+        shift
+      fi
       if [ ! -f "$dir/totk" ] || [ ! -x "$dir/totk" ]; then
         echo "${pname}-game: no totk in $dir" >&2
+        usage
         exit 2
       fi
       cd "$dir" || exit 2
