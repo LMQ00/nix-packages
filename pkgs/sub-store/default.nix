@@ -20,13 +20,13 @@ in
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "sub-store";
-  version = "2.44.6";
+  version = "2.44.10";
 
   src = fetchFromGitHub {
     owner = "sub-store-org";
     repo = "Sub-Store";
     rev = finalAttrs.version;
-    hash = "sha256-fS1N6sHFp+t+fPrb8yyLZIVesIYEDxQlIa2Nw9F3Fbc=";
+    hash = "sha256-q0id7yOphq/BHdbNdXZ4x1V14JytdrcYIpznBAA71Hc=";
   };
 
   # Sub-Store 的 Node.js 项目在 backend 子目录中
