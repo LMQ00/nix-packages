@@ -35,15 +35,15 @@
 
 let
   pname = "totk-recomp";
-  version = "0.4.0";
+  version = "0.4.1";
 
   # 上游只发布两个资产：Windows 的 zip 与 Linux 的 x86_64 AppImage。本包取 Linux
   # 那一个。AppImage 内含一套完整的构建工具链（LLVM 23、CPython 3.14、Steam
   # Runtime 3 "sniper" sysroot、SDL3/libvpx/Opus），玩家在自己机器上把自己的
   # 游戏文件编译成本地可执行文件；它本身不含任何游戏数据。
   src = fetchurl {
-    url = "https://github.com/valentderah/totk-pc-recomp/releases/download/v${version}/TotK-Setup-x86_64-${version}-linux.AppImage";
-    hash = "sha256-DzMULZW8YWro/eiaol57HV0LvAAGcjsysdp6NzAgFhw=";
+    url = "https://github.com/valentderah/totk-pc-recomp/releases/download/v${version}/TotK-Setup-${version}-x86_64.AppImage";
+    hash = "sha256-XtxsliNBn7/eg8fn/XueALtgTFKRonsgD67f01geaME=";
   };
 
   meta = with lib; {
