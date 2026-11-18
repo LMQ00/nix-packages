@@ -10,11 +10,11 @@
 }:
 
 let
-  version = "0.2.0-rc.2";
+  version = "0.2.2-rc.1";
 
   src = fetchurl {
     url = "https://registry.npmjs.org/@deepseek-ai/dsh/-/dsh-${version}.tgz";
-    hash = "sha256-vSeEfERc1opWWsH5HAa7vMdjnvkwcfZ4u1nF66/ziFk=";
+    hash = "sha256-rSGWiu0DN6MmuFNQeiOzDqy77E1nqwfztv3mm3WxnNY=";
   };
 
   # npm tarball 不带 lockfile，需要自备一份（见同目录 package-lock.json）。
@@ -35,7 +35,7 @@ buildNpmPackage {
   src = srcWithLock;
 
   npmDepsFetcherVersion = 2;
-  npmDepsHash = "sha256-S5kMHGouilUPjuvT2uI3Qi03Xnr3HlKpZxqGHYwIfMI=";
+  npmDepsHash = "sha256-c00Q4P0ru+ziYQqkTuW6osozSDaMPicIqxpijzVIecQ=";
 
   # tarball 里已是编译好的 JS（lib/*.js），无需再跑构建
   dontNpmBuild = true;

@@ -12,18 +12,18 @@
 | [pymp4](https://github.com/beardypig/pymp4) | 1.4.0 | 纯 Python MP4 解析器 |
 | [construct](https://github.com/construct/construct) | 2.8.8 | 二进制数据解析库 |
 | [wecom-wine](https://work.weixin.qq.com/) | 5.0.13.6005 | 企业微信 Windows 版 (Wine) |
-| [sub-store](https://github.com/sub-store-org/Sub-Store) | 2.44.10 | 高级订阅管理工具 |
+| [sub-store](https://github.com/sub-store-org/Sub-Store) | 2.44.16 | 高级订阅管理工具 |
 | [hanako](https://openhanako.com) | 1.5.118-beta | 有记忆、有性格的开源 AI 助理 |
 | [astudio](https://github.com/Candouber/Astudio) | 0.1.1-preview.4 | 多 Agent 协作任务执行工作台 |
 | [aurevoy](https://github.com/nullskymc/Aurevoy) | 0.6.14 | 本地运行的通用 AI Agent 桌面应用 |
-| [omp](https://omp.sh) | 18.20.0 | 终端 AI 编码 Agent，支持 LSP/DAP、子代理、40+ 模型提供商 |
+| [omp](https://omp.sh) | 18.22.2 | 终端 AI 编码 Agent，支持 LSP/DAP、子代理、40+ 模型提供商 |
 | [qq](https://im.qq.com/index/) | 3.2.35 | 腾讯 QQ Linux 客户端 (NT 架构) |
 | [wechat](https://weixin.qq.com/) | 4.1.13 | 微信 Linux 版 (AppImage) |
 | [baidunetdisk](https://pan.baidu.com/download) | 8.9.7 | 百度网盘 Linux 客户端 (官方 deb，FHS 环境原生运行) |
-| [dsh](https://github.com/deepseek-ai/deepseek-harness) | 0.2.0-rc.2 | DeepSeek 官方 Agent Harness |
+| [dsh](https://github.com/deepseek-ai/deepseek-harness) | 0.2.2-rc.1 | DeepSeek 官方 Agent Harness |
 | [open-orpheus](https://github.com/YUCLing/open-orpheus) | 0.20.0 | 网易云音乐官方客户端网页资源（Orpheus 宿主）的 Linux 运行环境 |
 | [cyberstrike](https://github.com/CyberStrikeus/CyberStrike) | 2.0.0 | 面向攻防安全的开源 AI Agent（自动化渗透测试） |
-| [totk-recomp](https://github.com/valentderah/totk-pc-recomp) | 0.4.0 | 《王国之泪》静态再编译安装器（用自己的游戏文件在本地构建，需 FHS 环境运行） |
+| [totk-recomp](https://github.com/valentderah/totk-pc-recomp) | 0.4.1 | 《王国之泪》静态再编译安装器（用自己的游戏文件在本地构建，需 FHS 环境运行） |
 
 ## 使用方法
 
