@@ -20,13 +20,13 @@ in
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "sub-store";
-  version = "2.44.16";
+  version = "2.44.26";
 
   src = fetchFromGitHub {
     owner = "sub-store-org";
     repo = "Sub-Store";
     rev = finalAttrs.version;
-    hash = "sha256-tq9WGCQB8iZ7eC3tYv52sp/zK0Si3vPq+l5AVMs7t7M=";
+    hash = "sha256-8i187kNv6Air5hFn3Tu8irB390bVDvgkEDKXdK9K6HI=";
   };
 
   # Sub-Store 的 Node.js 项目在 backend 子目录中
@@ -43,7 +43,7 @@ stdenv.mkDerivation (finalAttrs: {
   pnpmDeps = pnpm.fetchDeps {
     inherit (finalAttrs) pname version src;
     sourceRoot = "source/backend";
-    hash = "sha256-tmwrKQ59q0Q1RBZ1th2sXH5B7lB5L8JZ8U6/CEZDmjA=";
+    hash = "sha256-KPH5h9ofuyu0PZlSSE0PjI/0yYFTKs72Q10h0y+KF74=";
     fetcherVersion = 4;
     prePnpmInstall = lockfileIntegrityFix;
   };
